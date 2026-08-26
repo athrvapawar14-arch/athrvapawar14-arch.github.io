@@ -1,0 +1,44 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Hero from '../components/Hero.astro';
+import Projects from '../components/Projects.astro';
+import Blog from '../components/Blog.astro';
+import Contact from '../components/Contact.astro';
+---
+
+<Layout title="Athrva Pawar | ">
+  <!-- Sticky Navigation Header -->
+  <Navbar />
+
+  <!-- Main Content Wrapper -->
+  <main class="flex-1 mx-auto max-w-4xl w-full px-6">
+    <!-- Hero Section -->
+    <Hero />
+
+    <!-- Projects Grid Section -->
+    <Projects />
+
+    <!-- Blog/Notes Section -->
+    <Blog />
+
+    <!-- Contact & Copy Email Section -->
+    <Contact />
+  </main>
+
+  <!-- Clean Footer -->
+  <footer class="border-t border-[#E2E8F0] bg-white py-8 mt-auto">
+    <div class="mx-auto max-w-4xl px-6 flex flex-col md:flex-row items-center justify-between gap-4 font-mono text-[10px] md:text-xs text-[#1E293B]/50">
+      <div>
+        © 2026 Athrva. All rights reserved.
+      </div>
+      <div class="flex items-center gap-2">
+        <span>Built with</span>
+        <a href="https://astro.build" target="_blank" rel="noopener noreferrer" class="hover:text-blue-500 transition-colors">Astro</a>
+        <span>&amp;</span>
+        <a href="https://tailwindcss.com" target="_blank" rel="noopener noreferrer" class="hover:text-blue-500 transition-colors">Tailwind CSS</a>
+      </div>
+    </div>
+  </footer>
+</Layout>
+
