@@ -1,0 +1,179 @@
+---
+import Layout from "../../layouts/Layout.astro";
+---
+
+<Layout
+    title="Neural Network | Athrva Pawar"
+    description="A project exploring neural networks and LLMs by building a neural network from scratch in Python."
+>
+    <main class="project-page">
+        <a href="/#projects" class="back-link"> ← Back to Projects </a>
+
+        <header class="project-hero">
+            <span class="project-label">// PROJECT</span>
+
+            <h1>Neural Network</h1>
+
+            <p class="project-intro">
+                Learning how Neural Networks and LLMs work by building one from
+                scratch in Python.
+            </p>
+
+            <div class="tags">
+                <span>Python</span>
+                <span>Neural Networks</span>
+                <span>LLMs</span>
+            </div>
+        </header>
+
+        <section class="project-content">
+            <div>
+                <h2>Overview</h2>
+
+                <p>
+                    This project is an exploration into how neural networks
+                    actually work under the hood. Instead of relying entirely on
+                    existing machine-learning libraries, I'm building the
+                    fundamental pieces myself.
+                </p>
+            </div>
+
+            <div>
+                <h2>Why I Built It</h2>
+
+                <p>
+                    I wanted to understand what happens inside a neural network
+                    rather than treating it as a black box. Building the system
+                    myself gives me a better understanding of neurons, weights,
+                    biases, activation functions, and training.
+                </p>
+            </div>
+
+            <div>
+                <h2>How It Works</h2>
+
+                <p>
+                    The project focuses on the fundamental operations behind
+                    neural networks: forward propagation, calculating errors,
+                    adjusting weights, and gradually improving the model through
+                    training.
+                </p>
+            </div>
+
+            <div>
+                <h2>What I'm Learning</h2>
+
+                <p>
+                    I'm using this project to understand the mathematics and
+                    implementation behind neural networks and eventually connect
+                    those concepts to how larger language models work.
+                </p>
+            </div>
+        </section>
+
+        <div class="project-actions">
+            <!-- Replace this URL with your actual repository -->
+            <a
+                href="https://github.com/athrvapawar14-arch/Neural-Network"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="primary-button"
+            >
+                View Code on GitHub ↗
+            </a>
+        </div>
+    </main>
+</Layout>
+
+<style>
+    .project-page {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 5rem 1.5rem;
+    }
+
+    .back-link {
+        color: #64748b;
+        text-decoration: none;
+        font-family: monospace;
+    }
+
+    .back-link:hover {
+        color: #1769ff;
+    }
+
+    .project-hero {
+        margin-top: 4rem;
+        padding-bottom: 3rem;
+        border-bottom: 1px solid #dbe3ef;
+    }
+
+    .project-label {
+        color: #1769ff;
+        font-family: monospace;
+        font-weight: 600;
+    }
+
+    .project-hero h1 {
+        margin: 0.75rem 0 1rem;
+        font-size: clamp(2.5rem, 6vw, 4.5rem);
+        line-height: 1;
+    }
+
+    .project-intro {
+        max-width: 700px;
+        color: #64748b;
+        font-size: 1.2rem;
+        line-height: 1.7;
+    }
+
+    .tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 1.5rem;
+    }
+
+    .tags span {
+        padding: 0.4rem 0.7rem;
+        border: 1px solid #dbe3ef;
+        border-radius: 5px;
+        color: #64748b;
+        font-family: monospace;
+        font-size: 0.8rem;
+    }
+
+    .project-content {
+        display: grid;
+        gap: 3rem;
+        padding: 3rem 0;
+    }
+
+    .project-content h2 {
+        margin-bottom: 0.75rem;
+        font-size: 1.5rem;
+    }
+
+    .project-content p {
+        color: #64748b;
+        line-height: 1.8;
+    }
+
+    .project-actions {
+        margin-top: 1rem;
+    }
+
+    .primary-button {
+        display: inline-block;
+        padding: 0.85rem 1.2rem;
+        border-radius: 6px;
+        background: #172033;
+        color: white;
+        text-decoration: none;
+        font-family: monospace;
+    }
+
+    .primary-button:hover {
+        background: #1769ff;
+    }
+</style>

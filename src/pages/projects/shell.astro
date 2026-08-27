@@ -1,0 +1,178 @@
+---
+import Layout from "../../layouts/Layout.astro";
+---
+
+<Layout
+    title="Shell | Athrva Pawar"
+    description="A custom shell project exploring system programming in C and C++."
+>
+    <main class="project-page">
+        <a href="/#projects" class="back-link"> ← Back to Projects </a>
+
+        <header class="project-hero">
+            <span class="project-label">// PROJECT</span>
+
+            <h1>Shell</h1>
+
+            <p class="project-intro">
+                Learning how shells work and exploring system programming by
+                implementing a custom shell in C and C++.
+            </p>
+
+            <div class="tags">
+                <span>C</span>
+                <span>C++</span>
+                <span>System Programming</span>
+                <span>Linux</span>
+            </div>
+        </header>
+
+        <section class="project-content">
+            <div>
+                <h2>Overview</h2>
+
+                <p>
+                    This project explores how command-line shells work
+                    internally. Instead of simply using an existing shell, I'm
+                    implementing the fundamental pieces required to create one.
+                </p>
+            </div>
+
+            <div>
+                <h2>Why I Built It</h2>
+
+                <p>
+                    I wanted to understand what happens between typing a command
+                    into a terminal and having the operating system execute it.
+                    This project lets me explore processes, system calls,
+                    command parsing, and process management.
+                </p>
+            </div>
+
+            <div>
+                <h2>How It Works</h2>
+
+                <p>
+                    The shell reads commands from the user, parses the input,
+                    creates the necessary processes, and interacts with the
+                    operating system to execute programs.
+                </p>
+            </div>
+
+            <div>
+                <h2>What I'm Learning</h2>
+
+                <p>
+                    Through this project I'm getting practical experience with
+                    C, C++, Linux, processes, system programming, and the
+                    relationship between applications and the operating system.
+                </p>
+            </div>
+        </section>
+
+        <div class="project-actions">
+            <!-- Replace this URL with the actual Shell repository -->
+            <a
+                href="https://github.com/athrvapawar14-arch/Shell"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="primary-button"
+            >
+                View Code on GitHub ↗
+            </a>
+        </div>
+    </main>
+</Layout>
+
+<style>
+    .project-page {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 5rem 1.5rem;
+    }
+
+    .back-link {
+        color: #64748b;
+        text-decoration: none;
+        font-family: monospace;
+    }
+
+    .back-link:hover {
+        color: #1769ff;
+    }
+
+    .project-hero {
+        margin-top: 4rem;
+        padding-bottom: 3rem;
+        border-bottom: 1px solid #dbe3ef;
+    }
+
+    .project-label {
+        color: #1769ff;
+        font-family: monospace;
+        font-weight: 600;
+    }
+
+    .project-hero h1 {
+        margin: 0.75rem 0 1rem;
+        font-size: clamp(2.5rem, 6vw, 4.5rem);
+        line-height: 1;
+    }
+
+    .project-intro {
+        max-width: 700px;
+        color: #64748b;
+        font-size: 1.2rem;
+        line-height: 1.7;
+    }
+
+    .tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 1.5rem;
+    }
+
+    .tags span {
+        padding: 0.4rem 0.7rem;
+        border: 1px solid #dbe3ef;
+        border-radius: 5px;
+        color: #64748b;
+        font-family: monospace;
+        font-size: 0.8rem;
+    }
+
+    .project-content {
+        display: grid;
+        gap: 3rem;
+        padding: 3rem 0;
+    }
+
+    .project-content h2 {
+        margin-bottom: 0.75rem;
+        font-size: 1.5rem;
+    }
+
+    .project-content p {
+        color: #64748b;
+        line-height: 1.8;
+    }
+
+    .project-actions {
+        margin-top: 1rem;
+    }
+
+    .primary-button {
+        display: inline-block;
+        padding: 0.85rem 1.2rem;
+        border-radius: 6px;
+        background: #172033;
+        color: white;
+        text-decoration: none;
+        font-family: monospace;
+    }
+
+    .primary-button:hover {
+        background: #1769ff;
+    }
+</style>
