@@ -2,7 +2,7 @@
 
 ---
 
-<section id="about" class="relative overflow-hidden border-b border-[#E2E8F0]">
+<section id="about" class="relative overflow-hidden border-b border-[var(--color-portfolio-border)]">
   <!-- Subtle background grid -->
   <div class="hero-grid pointer-events-none absolute inset-0"></div>
 
@@ -28,17 +28,17 @@
         <!-- Main heading -->
         <h1
           class="max-w-3xl text-5xl font-semibold leading-[0.98]
-                 tracking-[-0.055em] text-[#172238]
+                 tracking-[-0.055em] text-[var(--color-portfolio-text)]
                  sm:text-6xl md:text-7xl xl:text-[5.5rem]"
         >
-          I like knowing
-          <span class="block text-blue-600"> what's underneath. </span>
+          I have questions.
+          <span class="block text-blue-600"> So I build things. </span>
         </h1>
 
         <!-- Identity -->
         <p
           class="mt-8 max-w-xl font-mono text-base leading-relaxed
-                 text-[#172238]/75 sm:text-lg"
+                 text-[var(--color-portfolio-text)]/75 sm:text-lg"
         >
           Computer Science student.
           <br />
@@ -47,7 +47,7 @@
 
         <!-- Description -->
         <p
-          class="mt-6 max-w-xl text-base leading-8 text-[#59677D]
+          class="mt-6 max-w-xl text-base leading-8 text-[var(--color-portfolio-text)]
                  md:text-lg"
         >
           I build things to understand them — from software and systems to
@@ -59,7 +59,7 @@
           <a
             href="/#projects"
             class="group inline-flex items-center gap-3 rounded-md
-                   bg-[#172238] px-5 py-3 font-mono text-xs
+                   bg-[var(--color-portfolio-card-bg)] px-5 py-3 font-mono text-xs
                    font-semibold text-white transition-all duration-300
                    hover:-translate-y-0.5 hover:bg-blue-600
                    hover:shadow-lg hover:shadow-blue-600/20"
@@ -77,8 +77,8 @@
           <a
             href="/about"
             class="inline-flex items-center gap-2 rounded-md
-                   border border-[#DCE2EA] bg-white px-5 py-3
-                   font-mono text-xs font-semibold text-[#172238]
+                   border border-[#DCE2EA] bg-[var(--color-portfolio-card-bg)] px-5 py-3
+                   font-mono text-xs font-semibold text-[var(--color-portfolio-text)]
                    transition-all duration-300
                    hover:-translate-y-0.5 hover:border-blue-300
                    hover:text-blue-600"
@@ -91,14 +91,14 @@
         <div class="mt-12 max-w-xl border-l-2 border-blue-500 pl-4">
           <p
             class="font-mono text-sm italic leading-relaxed
-                   text-[#64748B]"
+                   text-[var(--color-portfolio-muted)]"
           >
             “Look underneath the underneath.”
           </p>
 
           <p
             class="mt-2 font-mono text-[10px] uppercase
-                   tracking-[0.16em] text-[#94A3B8]"
+                   tracking-[0.16em] text-[var(--color-portfolio-text)]"
           >
             a useful way to approach computers
           </p>
@@ -117,7 +117,7 @@
         <!-- Main artwork -->
         <div
           class="art-frame group relative overflow-hidden rounded-2xl
-                 border border-[#DCE2EA] bg-[#0B1220]
+                 border border-[#DCE2EA] bg-[var(--color-portfolio-card-bg)]
                  shadow-[0_30px_80px_rgba(15,23,42,0.15)]
                  mx-auto w-[92%] md:w-full"
         >
@@ -164,7 +164,7 @@
         <div
           class="diagnostic-card absolute -bottom-7 -left-5
                  hidden rounded-xl border border-[#DCE2EA]
-                 bg-white/95 p-4 shadow-xl backdrop-blur-md
+                 bg-[var(--color-portfolio-card-bg)]/95 p-4 shadow-xl backdrop-blur-md
                  sm:block"
         >
           <div class="flex items-center gap-3">
@@ -182,13 +182,13 @@
 
             <span
               class="font-mono text-[10px] font-semibold
-                         tracking-wider text-[#172238]"
+                         tracking-wider text-[var(--color-portfolio-text)]"
             >
               CURRENTLY:
             </span>
           </div>
 
-          <p class="mt-2 font-mono text-xs text-[#64748B]">
+          <p class="mt-2 font-mono text-xs text-[var(--color-portfolio-muted)]">
             building something interesting
           </p>
         </div>
@@ -197,12 +197,12 @@
         <div
           class="code-card absolute -right-5 -top-6
                  hidden rounded-xl border border-[#DCE2EA]
-                 bg-white/95 p-4 shadow-xl backdrop-blur-md
+                 bg-[var(--color-portfolio-card-bg)]/95 p-4 shadow-xl backdrop-blur-md
                  md:block"
         >
           <p class="font-mono text-[9px] text-blue-600">curiosity.log</p>
 
-          <div class="mt-2 space-y-1 font-mono text-[9px] text-[#64748B]">
+          <div class="mt-2 space-y-1 font-mono text-[9px] text-[var(--color-portfolio-muted)]">
             <p>&gt; ask_question()</p>
             <p>&gt; build()</p>
             <p>&gt; break()</p>
@@ -217,20 +217,20 @@
     <!-- ================================================= -->
 
     <div
-      class="mt-14 flex flex-col gap-4 border-t border-[#E2E8F0]
+      class="mt-14 flex flex-col gap-4 border-t border-[var(--color-portfolio-border)]
              pt-5 sm:flex-row sm:items-center sm:justify-between"
     >
-      <p class="font-mono text-[10px] tracking-[0.14em] text-[#94A3B8]">
+      <p class="font-mono text-[10px] tracking-[0.14em] text-[var(--color-portfolio-text)]">
         SOFTWARE / SYSTEMS / EXPERIMENTS
       </p>
 
       <div class="flex items-center gap-3">
-        <span class="h-px w-8 bg-[#CBD5E1]"></span>
+        <span class="h-px w-8 bg-[var(--color-portfolio-card-bg)]"></span>
 
         <a
           href="/#exploring"
           class="group font-mono text-[10px] tracking-wider
-                 text-[#64748B] transition-colors hover:text-blue-600"
+                 text-[var(--color-portfolio-muted)] transition-colors hover:text-blue-600"
         >
           SEE WHAT I'M EXPLORING
           <span

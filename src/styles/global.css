@@ -13,6 +13,20 @@
   --color-portfolio-muted: #64748B;
   --color-portfolio-card-bg: #FFFFFF;
   --color-portfolio-glow: #10B981;
+
+  --color-portfolio-button-bg: #172238;
+  --color-portfolio-button-text: #FFFFFF;
+}
+
+.dark {
+    --color-portfolio-bg: #0F172A;
+    --color-portfolio-text: #E2E8F0;
+    --color-portfolio-border: #334155;
+    --color-portfolio-card-bg: #1E293B;
+    --color-portfolio-muted: #94A3B8;
+
+    --color-portfolio-button-bg: #E2E8F0;
+    --color-portfolio-button-text: #0F172A;
 }
 
 @layer base {
@@ -25,3 +39,4 @@
     -moz-osx-font-smoothing: grayscale;
   }
 }
+
