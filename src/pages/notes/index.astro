@@ -1,0 +1,186 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Navbar from "../../components/Navbar.astro";
+import { getCollection } from "astro:content";
+
+const notes = await getCollection("notes");
+
+notes.sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+---
+
+<Layout
+  title="Notes — Athrva Pawar"
+  description="Notes, experiments, and things I'm learning."
+>
+  <Navbar />
+
+  <main class="notes-page">
+    <header class="notes-header">
+      <span class="section-label">// NOTES</span>
+
+      <h1>
+        Things I'm<br />
+        <span>figuring out.</span>
+      </h1>
+
+      <p>
+        Notes from things I'm learning, building, breaking,
+        and trying to understand.
+      </p>
+    </header>
+
+    <section class="notes-list">
+      {notes.map((note) => (
+        <a href={`/notes/${note.id}`} class="note-card">
+          <div>
+            <span class="note-date">
+              {note.data.pubDate.toLocaleDateString("en-GB", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+              })}
+            </span>
+
+            <h2>{note.data.title}</h2>
+
+            <p>{note.data.description}</p>
+
+            <div class="note-tags">
+              {note.data.tags.map((tag) => (
+                <span>{tag}</span>
+              ))}
+            </div>
+          </div>
+
+          <span class="arrow">→</span>
+        </a>
+      ))}
+    </section>
+  </main>
+</Layout>
+
+<style>
+  .notes-page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 120px 24px 100px;
+  }
+
+  .notes-header {
+    padding-bottom: 60px;
+    border-bottom: 1px solid var(--color-portfolio-border);
+  }
+
+  .section-label {
+    color: var(--color-portfolio-accent);
+    font-family: monospace;
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+  }
+
+  h1 {
+    max-width: 760px;
+    margin: 24px 0;
+    color: var(--color-portfolio-text);
+    font-size: clamp(3.2rem, 7vw, 5.5rem);
+    line-height: 1.02;
+    letter-spacing: -0.055em;
+    }
+
+  h1 span {
+    display: block;
+    margin-top: 0.08em;
+    color: var(--color-portfolio-accent);
+    }
+
+  .notes-header p {
+    max-width: 620px;
+    margin: 0;
+    color: var(--color-portfolio-muted);
+    font-size: 1.2rem;
+    line-height: 1.7;
+  }
+
+  .notes-list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .note-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+    padding: 32px 4px;
+    border-bottom: 1px solid var(--color-portfolio-border);
+    color: var(--color-portfolio-text);
+    text-decoration: none;
+    transition: padding 0.2s ease;
+  }
+
+  .note-card:first-child {
+    border-top: 1px solid var(--color-portfolio-border);
+  }
+
+  .note-card:hover {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .note-date {
+    color: var(--color-portfolio-muted);
+    font-family: monospace;
+    font-size: 0.75rem;
+  }
+
+  .note-card h2 {
+    margin: 10px 0;
+    font-size: 1.6rem;
+    font-weight: 500;
+  }
+
+  .note-card p {
+    max-width: 650px;
+    margin: 0;
+    color: var(--color-portfolio-muted);
+    line-height: 1.6;
+  }
+
+  .note-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .note-tags span {
+    color: var(--color-portfolio-accent);
+    font-family: monospace;
+    font-size: 0.75rem;
+  }
+
+  .arrow {
+    font-size: 1.4rem;
+    transition: transform 0.2s ease;
+  }
+
+  .note-card:hover .arrow {
+    transform: translateX(6px);
+  }
+
+  @media (max-width: 800px) {
+    .notes-page {
+      padding: 90px 22px 70px;
+    }
+
+    .note-card {
+      align-items: flex-start;
+    }
+
+    h1 {
+      font-size: clamp(3rem, 13vw, 5rem);
+    }
+  }
+</style>

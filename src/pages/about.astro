@@ -21,8 +21,8 @@ import Navbar from "../components/Navbar.astro";
 
             <p class="intro">
                 I'm Athrva Pawar, a Computer Science student who enjoys building
-                things, taking systems apart, and understanding what happens
-                underneath the abstractions.
+                things, experimenting with technology, and figuring out how different
+                pieces of computing fit together.
             </p>
         </section>
 
@@ -43,10 +43,10 @@ import Navbar from "../components/Navbar.astro";
 
                     <p>
                         My interests aren't limited to writing software. I'm
-                        particularly interested in understanding how software
-                        interacts with the systems underneath it — operating
-                        systems, hardware, computer architecture, networks, and
-                        the layers that make everything work.
+                        particularly interested in how software interacts with
+                        operating systems, hardware, computer architecture,
+                        networks, and the other layers that make modern
+                        computing possible.
                     </p>
 
                     <p>
@@ -103,9 +103,8 @@ import Navbar from "../components/Navbar.astro";
                     <span class="number">03</span>
                     <h3>Understand</h3>
                     <p>
-                        I want to know what is happening underneath the
-                        abstraction — not just which command makes something
-                        work.
+                        I want to understand why something works, not just
+                        which command makes it work.
                     </p>
                 </div>
             </div>
@@ -128,6 +127,49 @@ import Navbar from "../components/Navbar.astro";
 
             
         </section>
+
+        <!-- EXPLORE -->
+        <section class="about-section">
+            <div class="section-heading">
+                <span class="section-label">// EXPLORE</span>
+                <h2>A little more about me.</h2>
+            </div>
+
+            <div class="about-links">
+                <a href="/about/education" class="about-link">
+                    <span>
+                        <span class="about-link-number">01</span>
+                        <span class="about-link-title">Education</span>
+                    </span>
+                    <span class="about-link-arrow">→</span>
+                </a>
+
+                <a href="/about/experience" class="about-link">
+                    <span>
+                        <span class="about-link-number">02</span>
+                        <span class="about-link-title">Experience</span>
+                    </span>
+                    <span class="about-link-arrow">→</span>
+                </a>
+
+                <a href="/about/achievements" class="about-link">
+                    <span>
+                        <span class="about-link-number">03</span>
+                        <span class="about-link-title">Achievements</span>
+                    </span>
+                    <span class="about-link-arrow">→</span>
+                </a>
+
+                <a href="/about/certifications" class="about-link">
+                    <span>
+                        <span class="about-link-number">04</span>
+                        <span class="about-link-title">Certifications</span>
+                    </span>
+                    <span class="about-link-arrow">→</span>
+                </a>
+            </div>
+        </section>
+
 
         <!-- CLOSING -->
         <section class="about-closing">
@@ -186,7 +228,7 @@ import Navbar from "../components/Navbar.astro";
 
     .about-section {
         padding: 90px 0;
-        border-top: 1px solid #dce2ea;
+        border-top: 1px solid var(--color-portfolio-border);
     }
 
     .section-heading {
@@ -216,9 +258,9 @@ import Navbar from "../components/Navbar.astro";
 
     .about-card {
         padding: 30px;
-        border: 1px solid #dce2ea;
         border-radius: 14px;
-        background: #f7f9fc;
+        border: 1px solid var(--color-portfolio-border);
+        background: var(--color-portfolio-card-bg);
     }
 
     .card-label {
@@ -240,8 +282,8 @@ import Navbar from "../components/Navbar.astro";
 
     .about-card li {
         padding-bottom: 14px;
-        border-bottom: 1px solid #dce2ea;
-        color: #26344b;
+        border-bottom: 1px solid var(--color-portfolio-border);
+        color: var(--color-portfolio-text);
         font-family: monospace;
     }
 
@@ -258,7 +300,7 @@ import Navbar from "../components/Navbar.astro";
 
     .principle {
         padding: 30px;
-        border: 1px solid #dce2ea;
+        border: 1px solid var(--color-portfolio-border);
         border-radius: 14px;
         transition:
             transform 0.2s ease,
@@ -285,7 +327,7 @@ import Navbar from "../components/Navbar.astro";
     .principle p {
         margin: 0;
         line-height: 1.7;
-        color: #66748a;
+        color: var(--color-portfolio-muted);
     }
 
     .focus-section {
@@ -337,8 +379,8 @@ import Navbar from "../components/Navbar.astro";
         display: inline-block;
         padding: 14px 22px;
         border-radius: 8px;
-        background: #172238;
-        color: white;
+        background: var(--color-portfolio-button-bg);
+        color: var(--color-portfolio-button-text);
         text-decoration: none;
         font-family: monospace;
         font-weight: 700;
@@ -370,5 +412,54 @@ import Navbar from "../components/Navbar.astro";
         .about-section {
             padding: 65px 0;
         }
+    }
+
+    .about-links {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .about-link {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 24px 4px;
+        border-bottom: 1px solid var(--color-portfolio-border);
+        color: var(--color-portfolio-text);
+        text-decoration: none;
+        transition:
+            padding 0.2s ease,
+            color 0.2s ease;
+    }
+
+    .about-link:first-child {
+        border-top: 1px solid var(--color-portfolio-border);
+    }
+
+    .about-link:hover {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .about-link-number {
+        display: block;
+        margin-bottom: 6px;
+        color: var(--color-portfolio-accent);
+        font-family: monospace;
+        font-size: 0.8rem;
+    }
+
+    .about-link-title {
+        font-size: 1.35rem;
+        font-weight: 500;
+    }
+
+    .about-link-arrow {
+        font-size: 1.3rem;
+        transition: transform 0.2s ease;
+    }
+
+    .about-link:hover .about-link-arrow {
+        transform: translateX(5px);
     }
 </style>

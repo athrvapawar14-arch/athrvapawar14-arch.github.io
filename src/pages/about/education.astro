@@ -1,0 +1,150 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Navbar from "../../components/Navbar.astro";
+---
+
+<Layout
+    title="Education — Athrva Pawar"
+    description="Athrva Pawar's educational background and academic journey."
+>
+    <Navbar />
+
+    <main class="about-page">
+        <section class="about-hero">
+            <div class="section-label">// EDUCATION</div>
+
+            <h1>
+                Where I'm<br />
+                <span>learning.</span>
+            </h1>
+
+            <p class="intro">
+                My academic journey so far, and the areas of Computer Science
+                I'm exploring along the way.
+            </p>
+        </section>
+
+        <section class="about-section">
+            <div class="section-heading">
+                <span class="section-label">// ACADEMICS</span>
+                <h2>Computer Science & Engineering.</h2>
+            </div>
+
+            <div class="education-card">
+                <div>
+                    <span class="education-label">CURRENTLY STUDYING</span>
+                    <h3>B.Tech in Computer Science & Engineering</h3>
+                </div>
+
+                <div class="education-meta">
+                    <span>HITAM</span>
+                    <span>2025 — Present</span>
+                </div>
+            </div>
+        </section>
+    </main>
+</Layout>
+
+<style>
+    .about-page {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 100px 32px 120px;
+    }
+
+    .section-label {
+        color: var(--color-portfolio-accent);
+        font-family: monospace;
+        font-size: 0.85rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+    }
+
+    .about-hero {
+        max-width: 850px;
+        padding: 50px 0 110px;
+    }
+
+    .about-hero h1 {
+        margin: 24px 0 30px;
+        font-size: clamp(3.5rem, 8vw, 6.5rem);
+        line-height: 0.98;
+        letter-spacing: -0.055em;
+        color: var(--color-portfolio-text);
+    }
+
+    .about-hero h1 span {
+        color: var(--color-portfolio-accent);
+    }
+
+    .intro {
+        max-width: 700px;
+        font-size: 1.35rem;
+        line-height: 1.7;
+        color: var(--color-portfolio-muted);
+    }
+
+    .about-section {
+        padding: 90px 0;
+        border-top: 1px solid var(--color-portfolio-border);
+    }
+
+    .section-heading {
+        margin-bottom: 55px;
+    }
+
+    .section-heading h2 {
+        margin: 12px 0 0;
+        font-size: clamp(2rem, 4vw, 3.2rem);
+        letter-spacing: -0.04em;
+        color: var(--color-portfolio-text);
+    }
+
+    .education-card {
+        padding: 32px;
+        border: 1px solid var(--color-portfolio-border);
+        border-radius: 14px;
+        background: var(--color-portfolio-card-bg);
+    }
+
+    .education-label {
+        color: var(--color-portfolio-accent);
+        font-family: monospace;
+        font-size: 0.8rem;
+        font-weight: 700;
+    }
+
+    .education-card h3 {
+        margin: 14px 0 30px;
+        font-size: 1.7rem;
+        color: var(--color-portfolio-text);
+    }
+
+    .education-meta {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        color: var(--color-portfolio-muted);
+        font-family: monospace;
+        font-size: 0.85rem;
+    }
+
+    @media (max-width: 800px) {
+        .about-page {
+            padding: 60px 22px 80px;
+        }
+
+        .about-hero {
+            padding: 30px 0 80px;
+        }
+
+        .about-section {
+            padding: 65px 0;
+        }
+
+        .education-meta {
+            flex-direction: column;
+            gap: 8px;
+        }
+    }
+</style>
