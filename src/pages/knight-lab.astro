@@ -1,0 +1,25 @@
+
+---
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/Navbar.astro";
+import KnightCinematic from "../components/KnightCinematic.astro";
+---
+
+<Layout
+  title="The Bearer — Cinematic Knight Lab"
+  description="An experimental cinematic 3D portfolio introduction."
+>
+  <Navbar />
+
+  <main class="knight-lab">
+    <KnightCinematic />
+  </main>
+</Layout>
+
+<style>
+  .knight-lab {
+    width: 100%;
+    flex: 1;
+    background: #090a0e;
+  }
+</style>

@@ -1,5 +1,5 @@
 ---
-
+import KnightViewer from './KnightViewer.astro';
 ---
 
 <section id="about" class="relative overflow-hidden border-b border-[var(--color-portfolio-border)]">
@@ -106,107 +106,25 @@
       </div>
 
       <!-- ================================================= -->
-      <!-- RIGHT: VISUAL SYSTEM -->
+      <!-- RIGHT: KNIGHT 3D VIEWER -->
       <!-- ================================================= -->
 
-      <div class="hero-visual mx-auto w-full max-w-md">
-        <!-- Decorative orbit -->
-        <div class="orbit orbit-one pointer-events-none"></div>
-        <div class="orbit orbit-two pointer-events-none"></div>
+      <div class="hero-visual mx-auto w-full">
+        <!-- Outer vignette frame -->
+        <div class="knight-frame">
+          <!-- Corner runes (decorative) -->
+          <span class="corner corner-tl" aria-hidden="true"></span>
+          <span class="corner corner-tr" aria-hidden="true"></span>
+          <span class="corner corner-bl" aria-hidden="true"></span>
+          <span class="corner corner-br" aria-hidden="true"></span>
 
-        <!-- Main artwork -->
-        <div
-          class="art-frame group relative overflow-hidden rounded-2xl
-                 border border-[#DCE2EA] bg-[var(--color-portfolio-card-bg)]
-                 shadow-[0_30px_80px_rgba(15,23,42,0.15)]
-                 mx-auto w-[92%] md:w-full"
-        >
-          <img
-            src="/images/hero.png"
-            alt="Abstract systems and computing artwork featuring an A"
-            class="block aspect-[4/3] w-full object-cover
-                   transition-transform duration-700
-                   group-hover:scale-[1.025]"
-          />
+          <!-- The 3D viewer -->
+          <KnightViewer />
 
-          <!-- Dark glass overlay -->
-          <div
-            class="pointer-events-none absolute inset-0
-                   bg-gradient-to-t from-[#08101F]/45
-                   via-transparent to-transparent"
-          >
-          </div>
-
-          <!-- Top-left metadata -->
-          <div
-            class="absolute left-4 top-4 rounded-md
-                   border border-white/10 bg-black/25
-                   px-3 py-2 backdrop-blur-md"
-          >
-            <p class="font-mono text-[9px] tracking-wider text-white/60">
-              ATHRVA.SYSTEM
-            </p>
-
-            <p class="mt-1 font-mono text-[10px] text-white/90">exploring...</p>
-          </div>
-
-          <!-- Bottom-right metadata -->
-          <div class="absolute bottom-4 right-4 text-right">
-            <p class="font-mono text-[9px] text-white/45">
-              build / break / understand
-            </p>
-
-            <p class="mt-1 font-mono text-[10px] text-white/75">001 → ∞</p>
-          </div>
-        </div>
-
-        <!-- Floating diagnostic card -->
-        <div
-          class="diagnostic-card absolute -bottom-7 -left-5
-                 hidden rounded-xl border border-[#DCE2EA]
-                 bg-[var(--color-portfolio-card-bg)]/95 p-4 shadow-xl backdrop-blur-md
-                 sm:block"
-        >
-          <div class="flex items-center gap-3">
-            <span class="relative flex h-2 w-2">
-              <span
-                class="absolute inline-flex h-full w-full animate-ping
-                       rounded-full bg-blue-400 opacity-50"
-              ></span>
-
-              <span
-                class="relative inline-flex h-2 w-2 rounded-full
-                       bg-blue-600"
-              ></span>
-            </span>
-
-            <span
-              class="font-mono text-[10px] font-semibold
-                         tracking-wider text-[var(--color-portfolio-text)]"
-            >
-              CURRENTLY:
-            </span>
-          </div>
-
-          <p class="mt-2 font-mono text-xs text-[var(--color-portfolio-muted)]">
-            building something interesting
-          </p>
-        </div>
-
-        <!-- Floating code card -->
-        <div
-          class="code-card absolute -right-5 -top-6
-                 hidden rounded-xl border border-[#DCE2EA]
-                 bg-[var(--color-portfolio-card-bg)]/95 p-4 shadow-xl backdrop-blur-md
-                 md:block"
-        >
-          <p class="font-mono text-[9px] text-blue-600">curiosity.log</p>
-
-          <div class="mt-2 space-y-1 font-mono text-[9px] text-[var(--color-portfolio-muted)]">
-            <p>&gt; ask_question()</p>
-            <p>&gt; build()</p>
-            <p>&gt; break()</p>
-            <p>&gt; understand()</p>
+          <!-- Bottom metadata label -->
+          <div class="viewer-meta">
+            <span class="viewer-meta-dot"></span>
+            <span class="viewer-meta-text">knight.glb — interactive</span>
           </div>
         </div>
       </div>
@@ -246,24 +164,27 @@
 </section>
 
 <style>
+  /* ── Background grid (unchanged) ── */
   .hero-grid {
     background-image:
-      linear-gradient(rgba(37, 99, 235, 0.035) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(37, 99, 235, 0.035) 1px, transparent 1px);
+      linear-gradient(rgba(37, 99, 235, 0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(37, 99, 235, 0.025) 1px, transparent 1px);
     background-size: 42px 42px;
     mask-image: linear-gradient(to bottom, black, transparent 85%);
   }
 
+  /* ── Ambient glow — warm gold tint for the knight section ── */
   .hero-glow {
-    width: 420px;
-    height: 420px;
-    right: 2%;
-    top: 10%;
+    width: 500px;
+    height: 500px;
+    right: -4%;
+    top: 5%;
     border-radius: 50%;
-    background: rgba(37, 99, 235, 0.055);
-    filter: blur(80px);
+    background: rgba(180, 130, 60, 0.06);
+    filter: blur(90px);
   }
 
+  /* ── Entrance animations ── */
   .hero-copy {
     animation: hero-enter 0.8s ease-out both;
   }
@@ -272,106 +193,80 @@
     animation: hero-enter 0.9s 0.12s ease-out both;
   }
 
-  .art-frame {
-    animation: float-art 7s ease-in-out infinite;
+  @keyframes hero-enter {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0);    }
   }
 
-  .orbit {
+  /* ── Knight frame ── */
+  .knight-frame {
+    position: relative;
+    width: 100%;
+    /* Tall enough to show the full figure on desktop */
+    height: clamp(420px, 55vw, 580px);
+    border-radius: 0.875rem;
+    overflow: hidden;
+    /* Thin parchment border */
+    border: 1px solid rgba(139, 115, 85, 0.25);
+    box-shadow:
+      0 0 0 1px rgba(139, 115, 85, 0.08),
+      0 24px 60px rgba(0, 0, 0, 0.55),
+      inset 0 0 40px rgba(0, 0, 0, 0.4);
+    background: #080a0f;
+  }
+
+  /* Decorative corner brackets */
+  .corner {
     position: absolute;
-    border: 1px dashed rgba(37, 99, 235, 0.22);
-    border-radius: 999px;
+    width: 14px;
+    height: 14px;
+    border-color: rgba(139, 115, 85, 0.45);
+    border-style: solid;
+    z-index: 10;
+    pointer-events: none;
+  }
+  .corner-tl { top: 10px; left: 10px;  border-width: 1px 0 0 1px; }
+  .corner-tr { top: 10px; right: 10px; border-width: 1px 1px 0 0; }
+  .corner-bl { bottom: 10px; left: 10px;  border-width: 0 0 1px 1px; }
+  .corner-br { bottom: 10px; right: 10px; border-width: 0 1px 1px 0; }
+
+  /* ── Bottom metadata strip ── */
+  .viewer-meta {
+    position: absolute;
+    bottom: 14px;
+    right: 18px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    z-index: 10;
     pointer-events: none;
   }
 
-  .orbit-one {
-    width: 110%;
-    height: 72%;
-    top: 14%;
-    left: -5%;
-    transform: rotate(-17deg);
-    animation: orbit-one 18s linear infinite;
+  .viewer-meta-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #8b7355;
+    opacity: 0.8;
+    animation: pulse-dot 2.4s ease-in-out infinite;
   }
 
-  .orbit-two {
-    width: 82%;
-    height: 105%;
-    top: -2%;
-    left: 9%;
-    transform: rotate(28deg);
-    animation: orbit-two 22s linear infinite reverse;
+  .viewer-meta-text {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    color: rgba(139, 115, 85, 0.6);
+    text-transform: uppercase;
   }
 
-  .diagnostic-card {
-    animation: float-small 5s ease-in-out infinite;
-  }
-
-  .code-card {
-    animation: float-small 6s 0.8s ease-in-out infinite;
-  }
-
-  @keyframes hero-enter {
-    from {
-      opacity: 0;
-      transform: translateY(18px);
-    }
-
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes float-art {
-    0%,
-    100% {
-      transform: translateY(0);
-    }
-
-    50% {
-      transform: translateY(-7px);
-    }
-  }
-
-  @keyframes float-small {
-    0%,
-    100% {
-      transform: translateY(0);
-    }
-
-    50% {
-      transform: translateY(-5px);
-    }
-  }
-
-  @keyframes orbit-one {
-    from {
-      transform: rotate(-17deg);
-    }
-
-    to {
-      transform: rotate(343deg);
-    }
-  }
-
-  @keyframes orbit-two {
-    from {
-      transform: rotate(28deg);
-    }
-
-    to {
-      transform: rotate(-332deg);
-    }
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 0.4; transform: scale(1);    }
+    50%       { opacity: 0.9; transform: scale(1.25); }
   }
 
   @media (prefers-reduced-motion: reduce) {
     .hero-copy,
-    .hero-visual,
-    .art-frame,
-    .diagnostic-card,
-    .code-card,
-    .orbit-one,
-    .orbit-two {
-      animation: none;
-    }
+    .hero-visual { animation: none; }
+    .viewer-meta-dot { animation: none; }
   }
 </style>

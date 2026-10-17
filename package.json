@@ -18,9 +18,14 @@
     "astro": "^7.2.7",
     "satteri": "^0.10.5",
     "tailwindcss": "^4.3.3",
+    "three": "^0.186.1",
     "unist-util-visit": "^5.1.0"
   },
   "allowScripts": {
     "esbuild": true
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "typescript": "^6.0.3"
   }
 }

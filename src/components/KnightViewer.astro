@@ -1,0 +1,463 @@
+---
+/**
+ * KnightViewer.astro
+ * ------------------
+ * A self-contained Three.js canvas that loads and renders a GLB knight model.
+ *
+ * Architecture (each concern is a clearly-named function in the <script>):
+ *   createScene()       – scene, fog, background colour
+ *   createRenderer()    – WebGLRenderer setup
+ *   createCamera()      – perspective camera + aspect update helper
+ *   createLights()      – ambient, key, rim, fill lights + shadow catcher
+ *   loadModel()         – GLTFLoader + DRACOLoader, returns Promise<Group>
+ *   fitModelToView()    – centres + scales model so it never clips
+ *   addInteraction()    – passive mouse/touch parallax, idle drift
+ *   animate()           – RAF render loop
+ *
+ * To swap the model: change the `data-model-path` attribute on the root div.
+ * Nothing else needs to change.
+ */
+---
+
+<div
+  class="knight-viewer-root"
+  id="knight-viewer-root"
+  data-model-path="/models/knight.glb"
+>
+  <!-- Canvas created and sized by JS -->
+  <canvas id="knight-canvas" aria-label="Interactive 3D knight model"></canvas>
+
+  <!-- WebGL / load fallback — shown only if Three.js cannot start -->
+  <div class="knight-fallback" id="knight-fallback" aria-hidden="true">
+    <div class="fallback-shield">
+      <svg viewBox="0 0 80 96" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path
+          d="M40 4 L76 18 L76 52 C76 72 40 92 40 92 C40 92 4 72 4 52 L4 18 Z"
+          stroke="#8B7355" stroke-width="2" fill="rgba(139,115,85,0.12)"
+        />
+        <path
+          d="M40 16 L64 26 L64 52 C64 66 40 80 40 80 C40 80 16 66 16 52 L16 26 Z"
+          stroke="#8B7355" stroke-width="1" fill="none" stroke-dasharray="3 3"
+        />
+        <line x1="40" y1="28" x2="40" y2="72" stroke="#8B7355" stroke-width="1"/>
+        <line x1="24" y1="48" x2="56" y2="48" stroke="#8B7355" stroke-width="1"/>
+      </svg>
+    </div>
+    <p class="fallback-label">3D viewer unavailable</p>
+    <p class="fallback-hint">WebGL may be disabled or the model could not be loaded.</p>
+  </div>
+
+  <!-- Loading indicator -->
+  <div class="knight-loader" id="knight-loader" aria-live="polite">
+    <div class="loader-ring"></div>
+    <span class="loader-text">Loading knight…</span>
+  </div>
+</div>
+
+<!--
+  Plain <script> tag — Vite bundles this as a proper ES module.
+  Three.js imports work correctly here (no define:vars needed).
+-->
+<script>
+  // ─── Imports ─────────────────────────────────────────────────────────────────
+  import * as THREE from "three";
+  import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+  import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
+
+  // ─── DOM refs ─────────────────────────────────────────────────────────────────
+  const root     = document.getElementById("knight-viewer-root") as HTMLDivElement;
+  const canvas   = document.getElementById("knight-canvas") as HTMLCanvasElement;
+  const fallback = document.getElementById("knight-fallback") as HTMLDivElement;
+  const loader   = document.getElementById("knight-loader")   as HTMLDivElement;
+
+  // Model path is stored as a data attribute — change it there to swap models.
+  const MODEL_PATH = root?.dataset.modelPath ?? "/models/knight.glb";
+
+  // ─── WebGL capability check ───────────────────────────────────────────────────
+  function isWebGLAvailable(): boolean {
+    try {
+      const t = document.createElement("canvas");
+      return !!(
+        window.WebGLRenderingContext &&
+        (t.getContext("webgl") || t.getContext("experimental-webgl"))
+      );
+    } catch {
+      return false;
+    }
+  }
+
+  function showFallback() {
+    if (canvas)   canvas.style.display   = "none";
+    if (loader)   loader.style.display   = "none";
+    if (fallback) {
+      fallback.style.display = "flex";
+      fallback.removeAttribute("aria-hidden");
+    }
+  }
+
+  if (!isWebGLAvailable()) {
+    showFallback();
+  } else {
+    initViewer().catch((err) => {
+      console.error("[KnightViewer]", err);
+      showFallback();
+    });
+  }
+
+  // ─── Main initialiser ─────────────────────────────────────────────────────────
+  async function initViewer() {
+    if (!root || !canvas) return;
+
+    // Prevent duplicate inits (e.g. hot-module reload)
+    if ((window as any).__knightViewerActive) return;
+    (window as any).__knightViewerActive = true;
+
+    // 1. Scene ─────────────────────────────────────────────────────────────────
+    const scene = createScene();
+
+    // 2. Renderer ──────────────────────────────────────────────────────────────
+    const renderer = createRenderer(canvas, root);
+
+    // 3. Camera ────────────────────────────────────────────────────────────────
+    const { camera, updateAspect } = createCamera(root);
+
+    // 4. Lights ────────────────────────────────────────────────────────────────
+    createLights(scene);
+
+    // 5. Load model ────────────────────────────────────────────────────────────
+    const modelGroup = await loadModel(MODEL_PATH, loader);
+    fitModelToView(modelGroup, camera);
+    scene.add(modelGroup);
+
+    // 6. Hide loader ───────────────────────────────────────────────────────────
+    if (loader) loader.style.display = "none";
+
+    // 7. Interaction ───────────────────────────────────────────────────────────
+    const { update: updateInteraction, dispose: disposeInteraction } =
+      addInteraction(root, modelGroup);
+
+    // 8. Resize ────────────────────────────────────────────────────────────────
+    const ro = new ResizeObserver(() => {
+      const w = root.clientWidth;
+      const h = root.clientHeight;
+      renderer.setSize(w, h, false);
+      updateAspect(w / h);
+    });
+    ro.observe(root);
+
+    // 9. Render loop ───────────────────────────────────────────────────────────
+    let lastTime = performance.now();
+    function frame(now: number) {
+      const dt = (now - lastTime) / 1000;
+      lastTime = now;
+      updateInteraction(dt);
+      renderer.render(scene, camera);
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+
+    // 10. Cleanup ──────────────────────────────────────────────────────────────
+    const mo = new MutationObserver(() => {
+      if (!document.contains(root)) {
+        disposeInteraction();
+        ro.disconnect();
+        renderer.dispose();
+        mo.disconnect();
+        (window as any).__knightViewerActive = false;
+      }
+    });
+    mo.observe(document.body, { childList: true, subtree: true });
+  }
+
+  // ─── Scene ───────────────────────────────────────────────────────────────────
+  function createScene() {
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x080a0f);
+    scene.fog = new THREE.FogExp2(0x080a0f, 0.04);
+    return scene;
+  }
+
+  // ─── Renderer ────────────────────────────────────────────────────────────────
+  function createRenderer(canvas: HTMLCanvasElement, root: HTMLElement) {
+    const renderer = new THREE.WebGLRenderer({
+      canvas,
+      antialias: true,
+      alpha: false,
+      powerPreference: "default",
+    });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(root.clientWidth, root.clientHeight, false);
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.1;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    return renderer;
+  }
+
+  // ─── Camera ──────────────────────────────────────────────────────────────────
+  function createCamera(root: HTMLElement) {
+    const aspect = root.clientWidth / root.clientHeight;
+    const camera = new THREE.PerspectiveCamera(42, aspect, 0.1, 200);
+    camera.position.set(0, 1.2, 5.5);
+    camera.lookAt(0, 0.6, 0);
+
+    function updateAspect(a: number) {
+      camera.aspect = a;
+      camera.updateProjectionMatrix();
+    }
+
+    return { camera, updateAspect };
+  }
+
+  // ─── Lighting ────────────────────────────────────────────────────────────────
+  function createLights(scene: THREE.Scene) {
+    // Dim ambient — maintains darkness
+    scene.add(new THREE.AmbientLight(0x1a1a2e, 0.6));
+
+    // Key — warm golden lantern from upper-right
+    const key = new THREE.DirectionalLight(0xffcc88, 2.8);
+    key.position.set(3, 5, 2);
+    key.castShadow = true;
+    key.shadow.mapSize.set(1024, 1024);
+    key.shadow.camera.near = 0.5;
+    key.shadow.camera.far  = 20;
+    key.shadow.camera.left = key.shadow.camera.bottom = -3;
+    key.shadow.camera.right = key.shadow.camera.top   =  3;
+    key.shadow.bias = -0.001;
+    scene.add(key);
+
+    // Rim — cool blue from behind-left (atmospheric depth)
+    const rim = new THREE.DirectionalLight(0x4488cc, 1.4);
+    rim.position.set(-3, 3, -4);
+    scene.add(rim);
+
+    // Fill — subtle warm bounce from below
+    const fill = new THREE.PointLight(0x553311, 0.5, 8);
+    fill.position.set(0, -0.8, 2);
+    scene.add(fill);
+
+    // Shadow-catcher ground plane
+    const ground = new THREE.Mesh(
+      new THREE.PlaneGeometry(12, 12),
+      new THREE.ShadowMaterial({ opacity: 0.35 })
+    );
+    ground.rotation.x = -Math.PI / 2;
+    ground.position.y = -2;
+    ground.receiveShadow = true;
+    scene.add(ground);
+  }
+
+  // ─── Model loading ───────────────────────────────────────────────────────────
+  function loadModel(path: string, loaderEl: HTMLElement | null): Promise<THREE.Group> {
+    return new Promise((resolve, reject) => {
+      const draco = new DRACOLoader();
+      draco.setDecoderPath(
+        "https://www.gstatic.com/draco/versioned/decoders/1.5.7/"
+      );
+      draco.setDecoderConfig({ type: "js" });
+
+      const gltf = new GLTFLoader();
+      gltf.setDRACOLoader(draco);
+
+      gltf.load(
+        path,
+        (result) => {
+          draco.dispose();
+          result.scene.traverse((node) => {
+            if ((node as THREE.Mesh).isMesh) {
+              node.castShadow    = true;
+              node.receiveShadow = true;
+            }
+          });
+          resolve(result.scene);
+        },
+        (progress) => {
+          if (progress.total > 0 && loaderEl) {
+            const pct = Math.round((progress.loaded / progress.total) * 100);
+            const txt = loaderEl.querySelector(".loader-text");
+            if (txt) txt.textContent = `Loading knight… ${pct}%`;
+          }
+        },
+        reject
+      );
+    });
+  }
+
+  // ─── Fit model to camera view ────────────────────────────────────────────────
+  /**
+   * Centres the model at the world origin and scales it so the full figure
+   * fits within the FOV with comfortable padding. Prevents any clipping.
+   */
+  function fitModelToView(group: THREE.Group, camera: THREE.PerspectiveCamera) {
+    const box    = new THREE.Box3().setFromObject(group);
+    const center = box.getCenter(new THREE.Vector3());
+    const size   = box.getSize(new THREE.Vector3());
+
+    // Centre on origin
+    group.position.sub(center);
+
+    // Scale so tallest dimension = targetHeight world units
+    const targetHeight = 2.2;
+    group.scale.setScalar(targetHeight / Math.max(size.x, size.y, size.z));
+
+    // After scaling, recompute to fine-tune vertical offset
+    const scaledBox    = new THREE.Box3().setFromObject(group);
+    const scaledCenter = scaledBox.getCenter(new THREE.Vector3());
+    const scaledSize   = scaledBox.getSize(new THREE.Vector3());
+
+    // Nudge down slightly so head doesn't kiss the top edge
+    group.position.y -= scaledCenter.y * 0.1;
+
+    // Pull camera back to fit the full figure with 30% breathing room
+    const fovRad = (camera.fov * Math.PI) / 180;
+    const dist   = (scaledSize.y / 2) / Math.tan(fovRad / 2);
+    camera.position.z = dist * 1.30;
+    camera.position.y = scaledCenter.y * 0.1;
+    camera.lookAt(0, scaledCenter.y * 0.1, 0);
+    camera.updateProjectionMatrix();
+  }
+
+  // ─── Mouse / touch interaction ───────────────────────────────────────────────
+  /**
+   * Gentle parallax: model sways ±15° horizontally, ±5° vertically.
+   * After 3s of mouse inactivity, drifts into a slow idle rotation.
+   */
+  function addInteraction(container: HTMLElement, group: THREE.Group) {
+    const target  = { x: 0, y: 0 };
+    const current = { x: 0, y: 0 };
+    let idleTime      = 0;
+    let lastMouseMove = Date.now();
+
+    function onPointerMove(clientX: number, clientY: number) {
+      const rect = container.getBoundingClientRect();
+      const nx   = ((clientX - rect.left)  / rect.width  - 0.5) * 2;
+      const ny   = ((clientY - rect.top)   / rect.height - 0.5) * 2;
+      target.y   =  nx * (Math.PI / 12);
+      target.x   = -ny * (Math.PI / 36);
+      lastMouseMove = Date.now();
+    }
+
+    function onMouseMove(e: MouseEvent)  { onPointerMove(e.clientX, e.clientY); }
+    function onTouchMove(e: TouchEvent)  {
+      if (e.touches[0]) onPointerMove(e.touches[0].clientX, e.touches[0].clientY);
+    }
+
+    container.addEventListener("mousemove", onMouseMove, { passive: true });
+    container.addEventListener("touchmove",  onTouchMove,  { passive: true });
+
+    function update(dt: number) {
+      const LERP    = 0.06;
+      const idleSec = (Date.now() - lastMouseMove) / 1000;
+
+      if (idleSec > 3) {
+        idleTime += dt * 0.3;
+        target.y  = Math.sin(idleTime) * (Math.PI / 20);
+        target.x  = 0;
+      }
+
+      current.x += (target.x - current.x) * LERP;
+      current.y += (target.y - current.y) * LERP;
+      group.rotation.x = current.x;
+      group.rotation.y = current.y;
+    }
+
+    function dispose() {
+      container.removeEventListener("mousemove", onMouseMove);
+      container.removeEventListener("touchmove",  onTouchMove);
+    }
+
+    return { update, dispose };
+  }
+</script>
+
+<style>
+  /* ── Root container ───────────────────────────────────────────── */
+  .knight-viewer-root {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 420px;
+    overflow: hidden;
+    background: #080a0f;
+  }
+
+  /* ── Canvas fills the container ──────────────────────────────── */
+  #knight-canvas {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  /* ── Loading state ───────────────────────────────────────────── */
+  .knight-loader {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    background: #080a0f;
+    pointer-events: none;
+    z-index: 5;
+  }
+
+  .loader-ring {
+    width: 36px;
+    height: 36px;
+    border: 2px solid rgba(139, 115, 85, 0.18);
+    border-top-color: #8b7355;
+    border-radius: 50%;
+    animation: kv-spin 0.9s linear infinite;
+  }
+
+  .loader-text {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    color: rgba(139, 115, 85, 0.65);
+    text-transform: uppercase;
+  }
+
+  @keyframes kv-spin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* ── Fallback state ──────────────────────────────────────────── */
+  .knight-fallback {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    position: absolute;
+    inset: 0;
+    background: #080a0f;
+    padding: 2rem;
+    z-index: 5;
+  }
+
+  .fallback-shield { width: 60px; opacity: 0.45; }
+
+  .fallback-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: #8b7355;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .fallback-hint {
+    font-size: 0.68rem;
+    color: rgba(139, 115, 85, 0.45);
+    text-align: center;
+    max-width: 220px;
+    line-height: 1.6;
+  }
+
+  /* ── Reduced motion ──────────────────────────────────────────── */
+  @media (prefers-reduced-motion: reduce) {
+    .loader-ring { animation: none; border-top-color: #8b7355; }
+  }
+</style>
