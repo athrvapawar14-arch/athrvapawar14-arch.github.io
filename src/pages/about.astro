@@ -180,7 +180,7 @@ import Navbar from "../components/Navbar.astro";
                 something else to learn.
             </h2>
 
-            <a href="/#projects" class="about-button">
+            <a href="/projects" class="about-button">
                 Explore my projects →
             </a>
         </section>
@@ -309,7 +309,7 @@ import Navbar from "../components/Navbar.astro";
 
     .principle:hover {
         transform: translateY(-4px);
-        box-shadow: 0 12px 30px rgba(20, 35, 60, 0.08);
+        box-shadow: 0 12px 30px var(--color-portfolio-shadow);
     }
 
     .number {
@@ -347,9 +347,9 @@ import Navbar from "../components/Navbar.astro";
         align-items: center;
         gap: 10px;
         padding: 10px 16px;
-        border: 1px solid #dce2ea;
+        border: 1px solid var(--color-portfolio-border);
         border-radius: 999px;
-        color: #536176;
+        color: var(--color-portfolio-muted);
         font-family: monospace;
         font-size: 0.8rem;
         letter-spacing: 0.05em;

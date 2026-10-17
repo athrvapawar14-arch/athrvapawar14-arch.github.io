@@ -1,0 +1,19 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Navbar from "../../components/Navbar.astro";
+import Projects from "../../components/Projects.astro";
+---
+
+<Layout
+  title="Projects — Athrva Pawar"
+  description="Software, systems, and experiments built by Athrva Pawar."
+>
+  <Navbar />
+  <main class="projects-page mx-auto w-full max-w-5xl px-6">
+    <Projects />
+  </main>
+</Layout>
+
+<style>
+  .projects-page { min-height: calc(100vh - 4rem); }
+</style>

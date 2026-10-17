@@ -1,0 +1,1015 @@
+<div class="cinematic" data-knight-cinematic>
+  <canvas class="cinematic__canvas" aria-label="Interactive 3D medieval knight"></canvas>
+  <div class="cinematic__vignette" aria-hidden="true"></div>
+  <div class="cinematic__grain" aria-hidden="true"></div>
+
+  <button class="cinematic__skip" data-skip-intro type="button">
+    SKIP INTRO <span aria-hidden="true">↘</span>
+  </button>
+
+  <div class="cinematic__counter" aria-hidden="true">
+    <span data-counter>∞</span>
+    <span class="cinematic__counter-line"></span>
+    <span>THE ARMOUR</span>
+  </div>
+
+  <div class="cinematic__caption" data-caption aria-live="polite">
+    <p class="cinematic__eyebrow" data-eyebrow>ATHRVA PAWAR / PORTFOLIO</p>
+    <div class="cinematic__contact-emblem" data-contact-emblem hidden aria-hidden="true">
+      <svg viewBox="0 0 88 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M44 4 79 18v28c0 22-15 38-35 49C24 84 9 68 9 46V18L44 4Z" stroke="currentColor" stroke-width="1.4"/>
+        <path d="M44 14 69 24v22c0 16-10 28-25 37-15-9-25-21-25-37V24l25-10Z" stroke="currentColor" stroke-opacity=".42" stroke-dasharray="3 4"/>
+        <path d="M44 28v42M28 43h32" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="44" cy="43" r="4" fill="currentColor"/>
+      </svg>
+      <span>THE OPEN GATE</span>
+    </div>
+    <h1 data-heading>THE BEARER</h1>
+    <p data-description>Choose an armour piece. Discover what lies beneath.</p>
+    <a class="cinematic__section-link" data-section-link href="/about" hidden>
+      ENTER SECTION <span aria-hidden="true">↗</span>
+    </a>
+  </div>
+
+  <div class="cinematic__hover-label" data-hover-label hidden aria-hidden="true">
+    <span data-hover-title>ABOUT</span>
+    <span>CLICK TO INSPECT</span>
+  </div>
+
+  <p class="cinematic__hint" data-hint>THE BEARER · A STUDY IN ARMOUR</p>
+
+  <div class="cinematic__loading" data-loading aria-live="polite">
+    <span class="cinematic__spinner"></span>
+    <p>SUMMONING THE BEARER</p>
+    <span data-progress>Preparing the scene…</span>
+  </div>
+
+  <div class="cinematic__error" data-error hidden>
+    <p>THE GATES REMAIN CLOSED</p>
+    <span>The 3D scene could not load. Check the browser console.</span>
+    <a href="/">Return to portfolio</a>
+  </div>
+</div>
+
+<script>
+  import * as THREE from "three";
+  import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+
+  const root = document.querySelector("[data-knight-cinematic]") as HTMLElement | null;
+
+  if (root && root.dataset.initialized !== "true") {
+    root.dataset.initialized = "true";
+
+    const canvas = root.querySelector("canvas") as HTMLCanvasElement;
+    const loading = root.querySelector("[data-loading]") as HTMLElement;
+    const error = root.querySelector("[data-error]") as HTMLElement;
+    const progress = root.querySelector("[data-progress]") as HTMLElement;
+    const heading = root.querySelector("[data-heading]") as HTMLElement;
+    const eyebrow = root.querySelector("[data-eyebrow]") as HTMLElement;
+    const description = root.querySelector("[data-description]") as HTMLElement;
+    const counter = root.querySelector("[data-counter]") as HTMLElement;
+    const sectionLink = root.querySelector("[data-section-link]") as HTMLAnchorElement;
+    const hint = root.querySelector("[data-hint]") as HTMLElement;
+    const caption = root.querySelector("[data-caption]") as HTMLElement;
+    const hoverLabel = root.querySelector("[data-hover-label]") as HTMLElement;
+    const hoverTitle = root.querySelector("[data-hover-title]") as HTMLElement;
+    const contactEmblem = root.querySelector("[data-contact-emblem]") as HTMLElement;
+    const skipButton = root.querySelector("[data-skip-intro]") as HTMLButtonElement;
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    // This cinematic intro is a defining part of the portfolio landing page.
+    // Visitors can always skip it; keep it enabled on the homepage while
+    // retaining reduced-motion behaviour if the component is reused elsewhere.
+    const reducedMotion = {
+      get matches(): boolean {
+        return prefersReducedMotion.matches && window.location.pathname !== "/";
+      },
+    };
+
+    // Shared palette lives in src/styles/global.css. CSS and Three.js read the
+    // same tokens so the armour scene can be recoloured from one place.
+    const cssColor = (name: string, fallback: string) =>
+      getComputedStyle(document.documentElement).getPropertyValue(name).trim() || fallback;
+    const palette = {
+      sceneBackground: cssColor("--knight-scene-background", "#090a0e"),
+      skyLight: cssColor("--knight-light-sky", "#b4c8e0"),
+      groundLight: cssColor("--knight-light-ground", "#17110c"),
+      keyLight: cssColor("--knight-light-key", "#ffd7a0"),
+      rimLight: cssColor("--knight-light-rim", "#497dbd"),
+      fillLight: cssColor("--knight-light-fill", "#a95e35"),
+      glow: cssColor("--knight-glow", "#ffd18a"),
+    };
+
+    // Section order is also the cinematic opening order and scroll order.
+    const sections = [
+      {
+        number: "01",
+        eyebrow: "01 / THE BEARER",
+        title: "ABOUT",
+        description: "The mind behind the armour.",
+        href: "/about",
+        y: 0.84,
+        x: 0,
+        cameraDistance: 3.85,
+      },
+      {
+        number: "02",
+        eyebrow: "02 / THE CRAFT",
+        title: "PROJECTS",
+        description: "Things built to understand what lies beneath.",
+        href: "/#projects",
+        y: 0.62,
+        x: -0.10,
+        cameraDistance: 4.05,
+      },
+      {
+        number: "03",
+        eyebrow: "03 / THE EDGE",
+        title: "SKILLS",
+        description: "Tools, systems, and the work of learning how they fit together.",
+        href: "/#exploring",
+        y: 0.51,
+        x: 0.02,
+        cameraDistance: 3.95,
+      },
+      {
+        number: "04",
+        eyebrow: "04 / THE JOURNAL",
+        title: "LOGS",
+        description: "Build notes, experiments, and things worth recording.",
+        href: "/#blog",
+        y: 0.20,
+        x: -0.12,
+        cameraDistance: 4.05,
+      },
+      {
+        number: "05",
+        eyebrow: "05 / THE RECORD",
+        title: "ACHIEVEMENTS",
+        description: "Coming soon. The record is still being assembled.",
+        href: "/about/achievements",
+        y: 0.72,
+        x: -0.25,
+        cameraDistance: 3.95,
+      },
+      {
+        number: "06",
+        eyebrow: "06 / THE OPEN GATE",
+        title: "CONTACT",
+        description: "Every worthwhile undertaking begins with a conversation.",
+        href: "/#contact",
+        y: 0.72,
+        x: 0.25,
+        cameraDistance: 3.95,
+      },
+    ];
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(palette.sceneBackground);
+    scene.fog = new THREE.FogExp2(palette.sceneBackground, 0.035);
+
+    const camera = new THREE.PerspectiveCamera(36, 1, 0.05, 100);
+    camera.position.set(0, 0.15, 6.8);
+    camera.lookAt(0, 0, 0);
+
+    const raycaster = new THREE.Raycaster();
+    const pointer = new THREE.Vector2();
+    const cameraDirection = new THREE.Vector3();
+    const modelCenter = new THREE.Vector3();
+    const modelSize = new THREE.Vector3();
+
+    scene.add(new THREE.HemisphereLight(palette.skyLight, palette.groundLight, 1.35));
+
+    const keyLight = new THREE.DirectionalLight(palette.keyLight, 3.0);
+    keyLight.position.set(2.5, 4, 3);
+    scene.add(keyLight);
+
+    const rimLight = new THREE.DirectionalLight(palette.rimLight, 2.5);
+    rimLight.position.set(-3, 2.5, -3);
+    scene.add(rimLight);
+
+    const fillLight = new THREE.PointLight(palette.fillLight, 0.65, 8);
+    fillLight.position.set(-1, 0, 2);
+    scene.add(fillLight);
+
+    // A soft, localised sprite makes the selected spot glow without recolouring
+    // an entire mesh. That matters because this GLB combines both shoulders
+    // into the larger arms/clothing meshes.
+    function makeGlowTexture() {
+      const glowCanvas = document.createElement("canvas");
+      glowCanvas.width = 128;
+      glowCanvas.height = 128;
+      const context = glowCanvas.getContext("2d");
+      if (!context) throw new Error("Could not create armour highlight texture");
+      const gradient = context.createRadialGradient(64, 64, 2, 64, 64, 62);
+      gradient.addColorStop(0, "rgba(255, 255, 255, 0.42)");
+      gradient.addColorStop(0.16, "rgba(255, 255, 255, 0.30)");
+      gradient.addColorStop(0.42, "rgba(255, 255, 255, 0.13)");
+      gradient.addColorStop(1, "rgba(255, 255, 255, 0)");
+      context.fillStyle = gradient;
+      context.fillRect(0, 0, 128, 128);
+      const texture = new THREE.CanvasTexture(glowCanvas);
+      texture.colorSpace = THREE.SRGBColorSpace;
+      texture.minFilter = THREE.LinearFilter;
+      texture.magFilter = THREE.LinearFilter;
+      texture.generateMipmaps = false;
+      return texture;
+    }
+
+    const glowTexture = makeGlowTexture();
+    const glowMaterial = new THREE.SpriteMaterial({
+      map: glowTexture,
+      color: new THREE.Color(palette.glow),
+      transparent: true,
+      opacity: 0.68,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+      depthTest: true,
+      toneMapped: false,
+    });
+    const glowSprite = new THREE.Sprite(glowMaterial);
+    glowSprite.visible = false;
+    glowSprite.renderOrder = 10;
+    scene.add(glowSprite);
+
+    let renderer: THREE.WebGLRenderer | null = null;
+    let knight: THREE.Group | null = null;
+    let modelBounds = new THREE.Box3();
+    let fullView = true;
+    let focusedSection: number | null = null;
+    let hoveredSection: number | null = null;
+    let hoveredPoint: THREE.Vector3 | null = null;
+    let focusedPoint: THREE.Vector3 | null = null;
+    let introPoint: THREE.Vector3 | null = null;
+    let introRunning = false;
+    let introIndex = -1;
+    let introNextAt = 0;
+    let transitionActive = false;
+    let transitionStartedAt = performance.now();
+    let transitionDuration = 0.02;
+    let lastScrollAt = 0;
+    let captionVersion = 0;
+    let disposed = false;
+    let cameraArcDirection = 1;
+
+    const currentPosition = camera.position.clone();
+    const currentTarget = new THREE.Vector3(0, 0, 0);
+    const fromPosition = camera.position.clone();
+    const fromTarget = currentTarget.clone();
+    const destinationPosition = camera.position.clone();
+    const destinationTarget = currentTarget.clone();
+    const sectionAnchors: THREE.Vector3[] = [];
+
+    const INTRO_MOVE_SECONDS = 7.0;
+    const FOCUS_MOVE_SECONDS = 9.0;
+    const RETURN_MOVE_SECONDS = 7.0;
+
+    function showError(err: unknown) {
+      console.error("[KnightCinematic]", err);
+      loading.style.display = "none";
+      error.hidden = false;
+    }
+
+    function resize() {
+      if (!renderer) return;
+      const width = root!.clientWidth;
+      const height = root!.clientHeight;
+      if (!width || !height) return;
+      renderer.setSize(width, height, false);
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+    }
+
+    function fadeCaption(update: () => void) {
+      const version = ++captionVersion;
+      caption.classList.add("is-changing");
+      window.setTimeout(() => {
+        if (disposed || version !== captionVersion) return;
+        update();
+        caption.classList.remove("is-changing");
+      }, reducedMotion.matches ? 0 : 240);
+    }
+
+    function setCaption(index: number, showLink: boolean) {
+      const section = sections[index];
+      fadeCaption(() => {
+        counter.textContent = section.number;
+        eyebrow.textContent = section.eyebrow;
+        heading.textContent = section.title;
+        description.textContent = section.description;
+        sectionLink.href = section.href;
+        sectionLink.hidden = !showLink;
+        contactEmblem.hidden = index !== 5;
+        root!.dataset.focused = String(index);
+      });
+    }
+
+    function setLandingCaption() {
+      fadeCaption(() => {
+        counter.textContent = "∞";
+        eyebrow.textContent = "COMPUTER SCIENCE × CURIOSITY";
+        heading.textContent = "THE BEARER";
+        description.textContent = "Computer Science student. Builder. Experimenter. Professional question-asker. I build things to understand what lies underneath.";
+        sectionLink.hidden = true;
+        contactEmblem.hidden = true;
+        root!.dataset.focused = "none";
+      });
+    }
+
+    function setDestination(position: THREE.Vector3, target: THREE.Vector3, seconds: number) {
+      // Rebase each move from the camera's current rendered position, even if
+      // a visitor interrupts the previous move midway through it.
+      fromPosition.copy(camera.position);
+      fromTarget.copy(currentTarget);
+      destinationPosition.copy(position);
+      destinationTarget.copy(target);
+      transitionStartedAt = performance.now();
+      transitionDuration = reducedMotion.matches ? 0.025 : seconds;
+      cameraArcDirection = Math.sign(destinationPosition.x - fromPosition.x) || 1;
+      transitionActive = true;
+    }
+
+    function cameraPositionFor(target: THREE.Vector3, index: number, distance?: number) {
+      const zDistance = distance ?? sections[index].cameraDistance;
+      let xOffset = 0.12;
+      if (index === 4) xOffset = -0.18;
+      if (index === 5) xOffset = 0.18;
+      if (index === 1) xOffset = 0.20;
+      return new THREE.Vector3(target.x + xOffset, target.y + 0.08, target.z + zDistance);
+    }
+
+    function setFocusPoint(point: THREE.Vector3 | null) {
+      focusedPoint = point ? point.clone() : null;
+      refreshGlow();
+    }
+
+    function refreshGlow() {
+      const point = hoveredPoint ?? focusedPoint ?? (introRunning ? introPoint : null);
+      if (!point) {
+        glowSprite.visible = false;
+        return;
+      }
+
+      camera.getWorldDirection(cameraDirection);
+      glowSprite.position.copy(point).addScaledVector(cameraDirection, -0.035);
+
+      const distance = Math.max(camera.position.distanceTo(glowSprite.position), 0.1);
+      const visibleWorldHeight = 2 * distance * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
+      const glowSize = visibleWorldHeight * (focusedSection !== null ? 0.13 : 0.095);
+      glowSprite.scale.set(glowSize, glowSize * 0.9, 1);
+      glowMaterial.opacity = focusedSection !== null ? 0.68 : introRunning ? 0.5 : 0.42;
+      glowSprite.visible = true;
+    }
+
+    function sectionFromHit(hit: THREE.Intersection): number {
+      const mesh = hit.object as THREE.Mesh;
+      const names: string[] = [];
+      if (mesh.name) names.push(mesh.name.toLowerCase());
+      if (mesh.geometry?.name) names.push(mesh.geometry.name.toLowerCase());
+      const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+      for (const material of materials) {
+        if (material?.name) names.push(material.name.toLowerCase());
+      }
+      let ancestor: THREE.Object3D | null = mesh.parent;
+      while (ancestor && ancestor !== knight) {
+        if (ancestor.name) names.push(ancestor.name.toLowerCase());
+        ancestor = ancestor.parent;
+      }
+      const name = names.join(" ");
+
+      const height = Math.max(modelBounds.max.y - modelBounds.min.y, 0.001);
+      const width = Math.max(modelBounds.max.x - modelBounds.min.x, 0.001);
+      const relativeY = (hit.point.y - modelBounds.min.y) / height;
+      const relativeX = (hit.point.x - modelCenter.x) / (width / 2);
+
+      if (/helmet|visor|head/.test(name)) return 0;
+      if (/sword|weapon/.test(name)) return 2;
+
+      // The GLB merges both shoulders into the arms/clothing geometry. Split
+      // their interaction by the actual hit location (screen-left/right).
+      if (relativeY > 0.67 && Math.abs(relativeX) > 0.40) {
+        return relativeX < 0 ? 4 : 5;
+      }
+
+      if (/legs|pants|greave|boot|foot|shin/.test(name)) return 3;
+      if (/arms|arm|gauntlet|hand|wrist/.test(name)) return 2;
+      if (/body|chest|torso|breastplate|clothes/.test(name)) return 1;
+
+      // Last-resort spatial fallback for mesh names that do not describe a part.
+      if (relativeY > 0.80) return 0;
+      if (relativeY > 0.67 && Math.abs(relativeX) > 0.40) return relativeX < 0 ? 4 : 5;
+      if (relativeY > 0.53) return 1;
+      if (relativeY > 0.34) return 2;
+      return 3;
+    }
+
+    function raycastFromPointer(event: PointerEvent | MouseEvent) {
+      if (!knight) return null;
+      const rect = canvas.getBoundingClientRect();
+      if (!rect.width || !rect.height) return null;
+      pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+      raycaster.setFromCamera(pointer, camera);
+      return raycaster.intersectObject(knight, true).find((hit) => (hit.object as THREE.Mesh).isMesh) ?? null;
+    }
+
+    function targetForSection(index: number) {
+      return sectionAnchors[index]?.clone() ?? new THREE.Vector3(0, 0, 0);
+    }
+
+    function focusSection(index: number, hitPoint?: THREE.Vector3) {
+      introRunning = false;
+      introPoint = null;
+      skipButton.hidden = true;
+      focusedSection = index;
+      fullView = false;
+
+      const target = hitPoint ? hitPoint.clone() : targetForSection(index);
+      // Slightly move the focus point toward the centre of the selected part
+      // to avoid aiming at an edge when the visitor clicks near a silhouette.
+      if (!hitPoint) target.z += 0.015;
+      setFocusPoint(target);
+      setCaption(index, true);
+      hint.textContent = "CLICK THE SELECTED ARMOUR TO ENTER · CLICK EMPTY SPACE TO RETURN";
+
+      const position = cameraPositionFor(target, index);
+      setDestination(position, target, FOCUS_MOVE_SECONDS);
+    }
+
+    function returnToFullView(seconds = RETURN_MOVE_SECONDS) {
+      introRunning = false;
+      introPoint = null;
+      focusedSection = null;
+      fullView = true;
+      skipButton.hidden = true;
+      setFocusPoint(null);
+      setLandingCaption();
+      hint.textContent = "HOVER TO DISCOVER · CLICK TO APPROACH · SCROLL TO EXPLORE";
+      setDestination(
+        new THREE.Vector3(0, 0.15, 6.8),
+        new THREE.Vector3(0, 0, 0),
+        seconds,
+      );
+    }
+
+    function skipIntro() {
+      if (!introRunning) return;
+      introRunning = false;
+      introPoint = null;
+      skipButton.hidden = true;
+      returnToFullView(reducedMotion.matches ? 0.025 : 3.6);
+    }
+
+    function sectionAnchorFromModel(index: number) {
+      const section = sections[index];
+      const x = modelCenter.x + modelSize.x * section.x;
+      const y = modelBounds.min.y + modelSize.y * section.y;
+      // Cast toward the model from the front, so the visual glow sits on the
+      // visible surface instead of floating in empty space.
+      const origin = new THREE.Vector3(x, y, modelBounds.max.z + 8);
+      raycaster.set(origin, new THREE.Vector3(0, 0, -1));
+      const hits = raycaster.intersectObject(knight!, true);
+      const hit = hits.find((item) => (item.object as THREE.Mesh).isMesh);
+      return hit ? hit.point.clone() : new THREE.Vector3(x, y, modelCenter.z);
+    }
+
+    function cameraShotTarget(index: number) {
+      const target = targetForSection(index);
+      return { target, position: cameraPositionFor(target, index) };
+    }
+
+    function beginIntroShot(index: number) {
+      introIndex = index;
+      introPoint = targetForSection(index);
+      focusedSection = null;
+      fullView = false;
+      setCaption(index, false);
+      refreshGlow();
+      hint.textContent = "THE ARMOUR TELLS ITS STORY · SKIP INTRO TO VIEW THE WHOLE KNIGHT";
+      const shot = cameraShotTarget(index);
+      introNextAt = Number.POSITIVE_INFINITY;
+      setDestination(shot.position, shot.target, INTRO_MOVE_SECONDS);
+    }
+
+    function finishIntro() {
+      introRunning = false;
+      introPoint = null;
+      focusedSection = null;
+      fullView = true;
+      skipButton.hidden = true;
+      setFocusPoint(null);
+      setLandingCaption();
+      hint.textContent = "HOVER TO DISCOVER · CLICK TO APPROACH · SCROLL TO EXPLORE";
+      setDestination(
+        new THREE.Vector3(0, 0.15, 6.8),
+        new THREE.Vector3(0, 0, 0),
+        RETURN_MOVE_SECONDS,
+      );
+    }
+
+    function updatePointer(event: PointerEvent) {
+      const hit = raycastFromPointer(event);
+      if (!hit) {
+        hoveredSection = null;
+        hoveredPoint = null;
+        hoverLabel.hidden = true;
+        canvas.style.cursor = focusedSection !== null ? "zoom-out" : "default";
+        refreshGlow();
+        return;
+      }
+
+      hoveredSection = sectionFromHit(hit);
+      hoveredPoint = hit.point.clone();
+      hoverTitle.textContent = sections[hoveredSection].title;
+      const rect = canvas.getBoundingClientRect();
+      const labelWidth = 158;
+      const labelHeight = 48;
+      const left = Math.max(10, Math.min(event.clientX - rect.left + 18, rect.width - labelWidth - 10));
+      const top = Math.max(10, Math.min(event.clientY - rect.top + 18, rect.height - labelHeight - 10));
+      hoverLabel.style.left = `${left}px`;
+      hoverLabel.style.top = `${top}px`;
+      hoverLabel.hidden = false;
+      canvas.style.cursor = "pointer";
+      refreshGlow();
+    }
+
+    function handleKnightClick(event: MouseEvent) {
+      if (!knight) return;
+      const hit = raycastFromPointer(event);
+
+      if (!hit) {
+        if (introRunning) {
+          skipIntro();
+        } else if (focusedSection !== null) {
+          returnToFullView();
+        }
+        return;
+      }
+
+      const index = sectionFromHit(hit);
+      if (introRunning) {
+        focusSection(index, hit.point);
+        return;
+      }
+
+      if (focusedSection === index) {
+        window.location.href = sections[index].href;
+        return;
+      }
+
+      focusSection(index, hit.point);
+    }
+
+    function handleWheel(event: WheelEvent) {
+      if (!knight || Math.abs(event.deltaY) < 10) return;
+      const direction = Math.sign(event.deltaY);
+
+      // During the cinematic opening, the first wheel input skips to the
+      // interactive overview. In the overview, scrolling down selects About.
+      if (introRunning) {
+        event.preventDefault();
+        skipIntro();
+        return;
+      }
+
+      if (focusedSection === null) {
+        if (direction > 0) {
+          event.preventDefault();
+          const now = performance.now();
+          if (now - lastScrollAt < 1050) return;
+          lastScrollAt = now;
+          focusSection(0, targetForSection(0));
+        }
+        // Let upward scrolling behave like a normal page at the full-body view.
+        return;
+      }
+
+      const next = focusedSection + direction;
+      // At the last armour section, allow the visitor to continue down into
+      // the rest of the homepage rather than trapping the page on the canvas.
+      if (direction > 0 && next >= sections.length) return;
+
+      event.preventDefault();
+      const now = performance.now();
+      if (now - lastScrollAt < 1050) return;
+      lastScrollAt = now;
+
+      if (next < 0) {
+        returnToFullView();
+      } else if (next < sections.length && next !== focusedSection) {
+        focusSection(next, targetForSection(next));
+      }
+    }
+
+    function handleKeydown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        if (introRunning) skipIntro();
+        else if (focusedSection !== null) returnToFullView();
+      }
+    }
+
+    function frame(now: number) {
+      if (disposed || !renderer) return;
+
+      let t = 1;
+      let eased = 1;
+      if (transitionActive) {
+        const elapsed = (now - transitionStartedAt) / 1000;
+        t = Math.min(elapsed / transitionDuration, 1);
+        // Quintic smootherstep: long, gentle acceleration and deceleration.
+        eased = t * t * t * (t * (t * 6 - 15) + 10);
+        if (t >= 1) {
+          transitionActive = false;
+          if (introRunning) introNextAt = now + 1400;
+        }
+      }
+
+      currentPosition.lerpVectors(fromPosition, destinationPosition, eased);
+      currentTarget.lerpVectors(fromTarget, destinationTarget, eased);
+
+      // A restrained sideways arc gives the camera a film-like path rather
+      // than a perfectly straight, mechanical zoom.
+      const arc = transitionActive ? Math.sin(Math.PI * eased) * 0.16 * cameraArcDirection : 0;
+      const lift = transitionActive ? Math.sin(Math.PI * eased) * 0.045 : 0;
+      camera.position.set(currentPosition.x + arc, currentPosition.y + lift, currentPosition.z);
+      camera.lookAt(currentTarget);
+
+      if (introRunning && !transitionActive && now >= introNextAt) {
+        if (introIndex < sections.length - 1) {
+          beginIntroShot(introIndex + 1);
+        } else {
+          finishIntro();
+        }
+      }
+
+      refreshGlow();
+      renderer.render(scene, camera);
+      requestAnimationFrame(frame);
+    }
+
+    async function init() {
+      try {
+        renderer = new THREE.WebGLRenderer({
+          canvas,
+          antialias: true,
+          alpha: false,
+          powerPreference: "default",
+        });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+        renderer.outputColorSpace = THREE.SRGBColorSpace;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.08;
+        resize();
+
+        const loader = new GLTFLoader();
+        const gltf = await loader.loadAsync("/models/knight.glb", (event) => {
+          if (event.total > 0) {
+            progress.textContent = `Loading model… ${Math.round((event.loaded / event.total) * 100)}%`;
+          } else {
+            progress.textContent = "Loading model…";
+          }
+        });
+        if (disposed) return;
+
+        knight = gltf.scene;
+        const rawBounds = new THREE.Box3().setFromObject(knight);
+        const rawCenter = rawBounds.getCenter(new THREE.Vector3());
+        const rawSize = rawBounds.getSize(new THREE.Vector3());
+        const scale = 3.6 / Math.max(rawSize.y, 0.001);
+        knight.scale.setScalar(scale);
+        knight.position.copy(rawCenter).multiplyScalar(-scale);
+        scene.add(knight);
+        knight.updateMatrixWorld(true);
+
+        modelBounds = new THREE.Box3().setFromObject(knight);
+        modelBounds.getCenter(modelCenter);
+        modelBounds.getSize(modelSize);
+
+        for (let index = 0; index < sections.length; index++) {
+          sectionAnchors.push(sectionAnchorFromModel(index));
+        }
+
+        currentPosition.set(0, 0.15, 6.8);
+        currentTarget.set(0, 0, 0);
+        fromPosition.copy(currentPosition);
+        destinationPosition.copy(currentPosition);
+        fromTarget.copy(currentTarget);
+        destinationTarget.copy(currentTarget);
+        camera.position.copy(currentPosition);
+        camera.lookAt(currentTarget);
+
+        loading.style.display = "none";
+        focusedSection = null;
+        fullView = true;
+        setLandingCaption();
+        hint.textContent = reducedMotion.matches
+          ? "HOVER TO DISCOVER · CLICK TO APPROACH · SCROLL TO EXPLORE"
+          : "THE BEARER · A STUDY IN ARMOUR";
+
+        if (!reducedMotion.matches) {
+          introRunning = true;
+          introIndex = -1;
+          introNextAt = performance.now() + 1500;
+          skipButton.hidden = false;
+        } else {
+          introRunning = false;
+          skipButton.hidden = true;
+        }
+
+        transitionActive = false;
+        transitionStartedAt = performance.now();
+        requestAnimationFrame(frame);
+      } catch (err) {
+        showError(err);
+      }
+    }
+
+    const observer = new ResizeObserver(resize);
+    observer.observe(root);
+    canvas.addEventListener("pointermove", updatePointer);
+    canvas.addEventListener("pointerleave", () => {
+      hoveredSection = null;
+      hoveredPoint = null;
+      hoverLabel.hidden = true;
+      canvas.style.cursor = "default";
+      refreshGlow();
+    });
+    canvas.addEventListener("click", handleKnightClick);
+    skipButton.addEventListener("click", skipIntro);
+    root.addEventListener("wheel", handleWheel, { passive: false });
+    document.addEventListener("keydown", handleKeydown);
+
+    document.addEventListener("astro:before-swap", () => {
+      disposed = true;
+      observer.disconnect();
+      renderer?.dispose();
+      glowTexture.dispose();
+      glowMaterial.dispose();
+      canvas.removeEventListener("pointermove", updatePointer);
+      canvas.removeEventListener("click", handleKnightClick);
+      skipButton.removeEventListener("click", skipIntro);
+      root.removeEventListener("wheel", handleWheel);
+      document.removeEventListener("keydown", handleKeydown);
+    }, { once: true });
+
+    init();
+  }
+</script>
+
+<style>
+  .cinematic {
+    position: relative;
+    height: calc(100svh - 4rem);
+    min-height: 34rem;
+    overflow: hidden;
+    isolation: isolate;
+    background: var(--knight-scene-background);
+    color: var(--knight-scene-text);
+    font-family: var(--font-mono);
+  }
+
+  .cinematic__canvas,
+  .cinematic__vignette,
+  .cinematic__grain {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .cinematic__canvas { z-index: 0; }
+
+  .cinematic__vignette {
+    z-index: 1;
+    pointer-events: none;
+    background:
+      linear-gradient(90deg, var(--knight-vignette-start), transparent 76%),
+      radial-gradient(ellipse at center, transparent 22%, var(--knight-vignette-edge) 100%);
+  }
+
+  .cinematic__grain {
+    z-index: 1;
+    pointer-events: none;
+    opacity: .065;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.3'/%3E%3C/svg%3E");
+  }
+
+  .cinematic__skip,
+  .cinematic__counter,
+  .cinematic__caption,
+  .cinematic__hover-label,
+  .cinematic__hint,
+  .cinematic__loading,
+  .cinematic__error {
+    position: absolute;
+    z-index: 2;
+  }
+
+
+
+  .cinematic__skip {
+    top: 1.22rem;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 1px solid var(--knight-border-soft);
+    padding: .55rem .8rem;
+    background: var(--knight-panel-translucent);
+    color: var(--knight-scene-gold-soft);
+    font: inherit;
+    font-size: .58rem;
+    letter-spacing: .14em;
+    cursor: pointer;
+    transition: color .25s ease, border-color .25s ease, background .25s ease;
+    backdrop-filter: blur(8px);
+  }
+
+  .cinematic__skip:hover {
+    color: var(--knight-scene-highlight);
+    border-color: var(--knight-border-highlight);
+    background: var(--knight-panel-hover);
+  }
+
+  .cinematic__skip[hidden] { display: none; }
+
+  .cinematic__counter {
+    top: 1.5rem;
+    right: clamp(1rem, 4vw, 3rem);
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    color: var(--knight-scene-counter);
+    font-size: .62rem;
+    letter-spacing: .13em;
+    pointer-events: none;
+  }
+
+  .cinematic__counter-line {
+    display: block;
+    width: 2rem;
+    height: 1px;
+    background: var(--knight-scene-bronze);
+  }
+
+  .cinematic__caption {
+    left: clamp(1.25rem, 7.2vw, 7rem);
+    bottom: clamp(7rem, 17vh, 10rem);
+    max-width: min(32rem, 72vw);
+    text-shadow: 0 2px 24px var(--knight-scene-shadow);
+    pointer-events: none;
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity .65s ease, transform .65s cubic-bezier(.22, 1, .36, 1);
+  }
+
+  .cinematic__caption.is-changing {
+    opacity: .08;
+    transform: translateY(12px);
+  }
+
+  .cinematic__eyebrow {
+    margin: 0 0 1rem;
+    color: var(--knight-scene-eyebrow);
+    font-size: .68rem;
+    letter-spacing: .2em;
+  }
+
+  .cinematic__caption h1 {
+    margin: 0;
+    color: var(--knight-scene-heading);
+    font-family: var(--font-display);
+    font-size: clamp(2.8rem, 6.1vw, 5.3rem);
+    font-weight: 400;
+    letter-spacing: -.055em;
+    line-height: .95;
+  }
+
+  .cinematic__caption > p:not(.cinematic__eyebrow) {
+    max-width: 25rem;
+    margin: 1.15rem 0 1.35rem;
+    color: var(--knight-scene-description);
+    font-family: var(--font-sans);
+    font-size: clamp(.9rem, 1.5vw, 1.08rem);
+    line-height: 1.7;
+  }
+
+  .cinematic__section-link {
+    display: inline-flex;
+    align-items: center;
+    gap: .8rem;
+    color: var(--knight-scene-gold);
+    text-decoration: none;
+    font-size: .67rem;
+    letter-spacing: .12em;
+    pointer-events: auto;
+  }
+
+  .cinematic__section-link[hidden] { display: none; }
+  .cinematic__section-link:hover { color: var(--knight-scene-highlight); }
+
+  .cinematic__contact-emblem {
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+    width: fit-content;
+    margin: 0 0 .8rem;
+    color: var(--knight-scene-gold);
+    font-size: .55rem;
+    letter-spacing: .16em;
+  }
+
+  .cinematic__contact-emblem[hidden] { display: none; }
+  .cinematic__contact-emblem svg { width: 3rem; height: 3.4rem; }
+
+  .cinematic__hover-label {
+    display: flex;
+    flex-direction: column;
+    gap: .28rem;
+    min-width: 9.5rem;
+    padding: .65rem .8rem;
+    border: 1px solid var(--knight-border-highlight);
+    background: var(--knight-panel-translucent-strong);
+    color: var(--knight-scene-gold-bright);
+    box-shadow: 0 0 22px var(--knight-shadow-glow);
+    font-size: .62rem;
+    letter-spacing: .13em;
+    pointer-events: none;
+    backdrop-filter: blur(8px);
+  }
+
+  .cinematic__hover-label span + span {
+    color: var(--knight-scene-counter);
+    font-size: .5rem;
+  }
+
+  .cinematic__hover-label[hidden] { display: none; }
+
+  .cinematic__hint {
+    right: clamp(1rem, 4vw, 3rem);
+    bottom: 2.6rem;
+    max-width: 34rem;
+    color: var(--knight-hint-color);
+    font-size: .58rem;
+    letter-spacing: .12em;
+    text-align: right;
+    pointer-events: none;
+  }
+
+  .cinematic__loading,
+  .cinematic__error {
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: .8rem;
+    background: var(--knight-scene-background);
+    text-align: center;
+  }
+
+  .cinematic__loading { z-index: 5; }
+  .cinematic__error { z-index: 6; }
+  .cinematic__error[hidden] { display: none; }
+
+  .cinematic__loading p,
+  .cinematic__error p {
+    color: var(--knight-scene-gold);
+    font-size: .7rem;
+    letter-spacing: .18em;
+  }
+
+  .cinematic__loading span:last-child,
+  .cinematic__error span {
+    color: var(--knight-scene-loading-muted);
+    font-size: .65rem;
+  }
+
+  .cinematic__error a { margin-top: 1rem; color: var(--knight-scene-gold); }
+
+  .cinematic__spinner {
+    width: 2rem;
+    height: 2rem;
+    border: 1px solid var(--knight-scene-spinner-border);
+    border-top-color: var(--knight-scene-gold);
+    border-radius: 50%;
+    animation: knight-spin 1s linear infinite;
+  }
+
+  @keyframes knight-spin { to { transform: rotate(360deg); } }
+
+  @media (max-width: 640px) {
+    .cinematic { min-height: 38rem; height: calc(100svh - 4rem); }
+    .cinematic__caption { bottom: 8rem; max-width: 88vw; }
+    .cinematic__caption h1 { font-size: clamp(2.7rem, 13vw, 4.5rem); }
+    .cinematic__skip { top: auto; bottom: 4.5rem; left: auto; right: 1rem; transform: none; }
+    .cinematic__hint { right: 1rem; left: 1rem; bottom: 1rem; font-size: .5rem; text-align: left; }
+    .cinematic__hover-label { display: none; }
+    .cinematic__counter { top: 1.45rem; font-size: .52rem; gap: .4rem; }
+    .cinematic__counter-line { width: 1rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cinematic__spinner { animation: none; }
+    .cinematic__caption { transition: none; }
+    .cinematic__skip { transition: none; }
+  }
+</style>

@@ -104,10 +104,10 @@ const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURICompo
 
     padding: 4rem;
 
-    border: 1px solid #dbe3ef;
+    border: 1px solid var(--color-portfolio-border);
     border-radius: 14px;
 
-    background: white;
+    background: var(--color-portfolio-card-bg);
   }
 
   .contact-content {
@@ -117,7 +117,7 @@ const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURICompo
   }
 
   .section-label {
-    color: #1769ff;
+    color: var(--color-portfolio-accent);
     font-family: monospace;
     font-weight: 600;
   }
@@ -125,7 +125,7 @@ const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURICompo
   .contact-card h2 {
     margin: 0.75rem 0 1rem;
     font-size: clamp(2rem, 5vw, 3rem);
-    color: #172033;
+    color: var(--color-portfolio-text);
   }
 
   .contact-card p {
@@ -159,24 +159,24 @@ const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURICompo
   }
 
   .email-button {
-    background: #172033;
-    color: white;
+    background: var(--color-portfolio-button-bg);
+    color: var(--color-portfolio-button-text);
     text-decoration: none;
   }
 
   .email-button:hover {
-    background: #1769ff;
+    background: var(--color-portfolio-accent);
   }
 
   .copy-button {
-    border: 1px solid #dbe3ef;
-    background: white;
-    color: #172033;
+    border: 1px solid var(--color-portfolio-border);
+    background: var(--color-portfolio-card-bg);
+    color: var(--color-portfolio-text);
   }
 
   .copy-button:hover {
-    border-color: #1769ff;
-    color: #1769ff;
+    border-color: var(--color-portfolio-accent);
+    color: var(--color-portfolio-accent);
   }
 
   .social-links {
@@ -194,11 +194,11 @@ const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURICompo
   }
 
   .social-links a:hover {
-    color: #1769ff;
+    color: var(--color-portfolio-accent);
   }
 
   .social-links span {
-    color: #cbd5e1;
+    color: var(--color-portfolio-muted);
   }
 
   .contact-decoration {
@@ -212,7 +212,7 @@ const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURICompo
 
     border-radius: 50%;
 
-    background: #f1f5f9;
+    background: var(--color-portfolio-surface);
   }
 
   @media (max-width: 700px) {

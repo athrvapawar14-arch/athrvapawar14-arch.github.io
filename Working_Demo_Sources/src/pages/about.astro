@@ -1,0 +1,465 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/Navbar.astro";
+---
+
+<Layout
+    title="About Athrva"
+    description="Learn more about Athrva Pawar, a Computer Science student interested in software, systems, hardware, and emerging technologies."
+>
+    <Navbar />
+
+    <main class="about-page">
+        <!-- INTRO -->
+        <section class="about-hero">
+            <div class="section-label">// WHO I AM</div>
+
+            <h1>
+                Curious about<br />
+                <span>how things work.</span>
+            </h1>
+
+            <p class="intro">
+                I'm Athrva Pawar, a Computer Science student who enjoys building
+                things, experimenting with technology, and figuring out how different
+                pieces of computing fit together.
+            </p>
+        </section>
+
+        <!-- ABOUT -->
+        <section class="about-section">
+            <div class="section-heading">
+                <span class="section-label">// ABOUT ME</span>
+                <h2>A little more context.</h2>
+            </div>
+
+            <div class="about-grid">
+                <div class="about-text">
+                    <p>
+                        I'm currently studying Computer Science and Engineering,
+                        while exploring different areas of computing through
+                        projects, experiments, and a lot of curiosity.
+                    </p>
+
+                    <p>
+                        My interests aren't limited to writing software. I'm
+                        particularly interested in how software interacts with
+                        operating systems, hardware, computer architecture,
+                        networks, and the other layers that make modern
+                        computing possible.
+                    </p>
+
+                    <p>
+                        At the same time, I'm exploring newer areas of computing
+                        such as artificial intelligence, neural networks,
+                        quantum computing, and other emerging technologies.
+                    </p>
+                </div>
+
+                <div class="about-card">
+                    <div class="card-label">// CURRENTLY EXPLORING</div>
+
+                    <ul>
+                        <li>Computer Systems</li>
+                        <li>System Programming</li>
+                        <li>Machine Learning</li>
+                        <li>Quantum Computing</li>
+                        <li>Emerging Technologies</li>
+                        <li>Web Development</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- HOW I LEARN -->
+        <section class="about-section">
+            <div class="section-heading">
+                <span class="section-label">// HOW I LEARN</span>
+                <h2>Build. Break. Understand.</h2>
+            </div>
+
+            <div class="principles">
+                <div class="principle">
+                    <span class="number">01</span>
+                    <h3>Build</h3>
+                    <p>
+                        I learn best when I have something tangible to work on.
+                        Projects give me a reason to understand the technology
+                        instead of just reading about it.
+                    </p>
+                </div>
+
+                <div class="principle">
+                    <span class="number">02</span>
+                    <h3>Experiment</h3>
+                    <p>
+                        I don't mind breaking things. Trying something,
+                        encountering a strange bug, and figuring out why it
+                        happened is often where the interesting part begins.
+                    </p>
+                </div>
+
+                <div class="principle">
+                    <span class="number">03</span>
+                    <h3>Understand</h3>
+                    <p>
+                        I want to understand why something works, not just
+                        which command makes it work.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CURRENT FOCUS -->
+        <section class="about-section focus-section">
+            <div class="section-heading">
+                <span class="section-label">// RIGHT NOW</span>
+                <h2>What I'm working toward.</h2>
+            </div>
+
+            <p class="focus-text">
+                I'm trying to move beyond simply learning technologies and start
+                building things that people can actually use. Every project is
+                an opportunity to learn something new, improve my engineering
+                skills, and understand a little more about the systems behind
+                the software.
+            </p>
+
+            
+        </section>
+
+        <!-- EXPLORE -->
+        <section class="about-section">
+            <div class="section-heading">
+                <span class="section-label">// EXPLORE</span>
+                <h2>A little more about me.</h2>
+            </div>
+
+            <div class="about-links">
+                <a href="/about/education" class="about-link">
+                    <span>
+                        <span class="about-link-number">01</span>
+                        <span class="about-link-title">Education</span>
+                    </span>
+                    <span class="about-link-arrow">→</span>
+                </a>
+
+                <a href="/about/experience" class="about-link">
+                    <span>
+                        <span class="about-link-number">02</span>
+                        <span class="about-link-title">Experience</span>
+                    </span>
+                    <span class="about-link-arrow">→</span>
+                </a>
+
+                <a href="/about/achievements" class="about-link">
+                    <span>
+                        <span class="about-link-number">03</span>
+                        <span class="about-link-title">Achievements</span>
+                    </span>
+                    <span class="about-link-arrow">→</span>
+                </a>
+
+                <a href="/about/certifications" class="about-link">
+                    <span>
+                        <span class="about-link-number">04</span>
+                        <span class="about-link-title">Certifications</span>
+                    </span>
+                    <span class="about-link-arrow">→</span>
+                </a>
+            </div>
+        </section>
+
+
+        <!-- CLOSING -->
+        <section class="about-closing">
+            <span class="section-label">// KEEP EXPLORING</span>
+
+            <h2>
+                There's always<br />
+                something else to learn.
+            </h2>
+
+            <a href="/#projects" class="about-button">
+                Explore my projects →
+            </a>
+        </section>
+    </main>
+</Layout>
+
+<style>
+    .about-page {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 100px 32px 120px;
+    }
+
+    .section-label {
+        color: var(--color-portfolio-accent);
+        font-family: monospace;
+        font-size: 0.85rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+    }
+
+    .about-hero {
+        max-width: 850px;
+        padding: 50px 0 110px;
+    }
+
+    .about-hero h1 {
+        margin: 24px 0 30px;
+        font-size: clamp(3.5rem, 8vw, 6.5rem);
+        line-height: 0.98;
+        letter-spacing: -0.055em;
+        color: var(--color-portfolio-text);
+    }
+
+    .about-hero h1 span {
+        color: var(--color-portfolio-accent);
+    }
+
+    .intro {
+        max-width: 700px;
+        font-size: 1.35rem;
+        line-height: 1.7;
+        color: var(--color-portfolio-muted);
+    }
+
+    .about-section {
+        padding: 90px 0;
+        border-top: 1px solid var(--color-portfolio-border);
+    }
+
+    .section-heading {
+        margin-bottom: 55px;
+    }
+
+    .section-heading h2 {
+        margin: 12px 0 0;
+        font-size: clamp(2rem, 4vw, 3.2rem);
+        letter-spacing: -0.04em;
+        color: var(--color-portfolio-text);
+    }
+
+    .about-grid {
+        display: grid;
+        grid-template-columns: 1.5fr 1fr;
+        gap: 70px;
+        align-items: start;
+    }
+
+    .about-text p {
+        margin: 0 0 24px;
+        font-size: 1.1rem;
+        line-height: 1.85;
+        color: var(--color-portfolio-muted);
+    }
+
+    .about-card {
+        padding: 30px;
+        border-radius: 14px;
+        border: 1px solid var(--color-portfolio-border);
+        background: var(--color-portfolio-card-bg);
+    }
+
+    .card-label {
+        margin-bottom: 22px;
+        color: var(--color-portfolio-accent);
+        font-family: monospace;
+        font-size: 0.8rem;
+        font-weight: 700;
+    }
+
+    .about-card ul {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .about-card li {
+        padding-bottom: 14px;
+        border-bottom: 1px solid var(--color-portfolio-border);
+        color: var(--color-portfolio-text);
+        font-family: monospace;
+    }
+
+    .about-card li:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .principles {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 25px;
+    }
+
+    .principle {
+        padding: 30px;
+        border: 1px solid var(--color-portfolio-border);
+        border-radius: 14px;
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+    .principle:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 30px var(--color-portfolio-shadow);
+    }
+
+    .number {
+        color: var(--color-portfolio-accent);
+        font-family: monospace;
+        font-size: 0.85rem;
+    }
+
+    .principle h3 {
+        margin: 18px 0 12px;
+        font-size: 1.5rem;
+        color: var(--color-portfolio-text);
+    }
+
+    .principle p {
+        margin: 0;
+        line-height: 1.7;
+        color: var(--color-portfolio-muted);
+    }
+
+    .focus-section {
+        position: relative;
+    }
+
+    .focus-text {
+        max-width: 800px;
+        margin: 0 0 35px;
+        font-size: 1.25rem;
+        line-height: 1.8;
+        color: var(--color-portfolio-muted);
+    }
+
+    .status {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 16px;
+        border: 1px solid var(--color-portfolio-border);
+        border-radius: 999px;
+        color: var(--color-portfolio-muted);
+        font-family: monospace;
+        font-size: 0.8rem;
+        letter-spacing: 0.05em;
+    }
+
+    .status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #16a765;
+    }
+
+    .about-closing {
+        padding: 100px 0 30px;
+        text-align: center;
+    }
+
+    .about-closing h2 {
+        margin: 20px 0 35px;
+        font-size: clamp(2.5rem, 6vw, 5rem);
+        line-height: 1.05;
+        letter-spacing: -0.05em;
+        color: var(--color-portfolio-text);
+    }
+
+    .about-button {
+        display: inline-block;
+        padding: 14px 22px;
+        border-radius: 8px;
+        background: var(--color-portfolio-button-bg);
+        color: var(--color-portfolio-button-text);
+        text-decoration: none;
+        font-family: monospace;
+        font-weight: 700;
+        transition: transform 0.2s ease;
+    }
+
+    .about-button:hover {
+        transform: translateY(-2px);
+    }
+
+    @media (max-width: 800px) {
+        .about-page {
+            padding: 60px 22px 80px;
+        }
+
+        .about-hero {
+            padding: 30px 0 80px;
+        }
+
+        .about-grid,
+        .principles {
+            grid-template-columns: 1fr;
+        }
+
+        .about-grid {
+            gap: 35px;
+        }
+
+        .about-section {
+            padding: 65px 0;
+        }
+    }
+
+    .about-links {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .about-link {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 24px 4px;
+        border-bottom: 1px solid var(--color-portfolio-border);
+        color: var(--color-portfolio-text);
+        text-decoration: none;
+        transition:
+            padding 0.2s ease,
+            color 0.2s ease;
+    }
+
+    .about-link:first-child {
+        border-top: 1px solid var(--color-portfolio-border);
+    }
+
+    .about-link:hover {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .about-link-number {
+        display: block;
+        margin-bottom: 6px;
+        color: var(--color-portfolio-accent);
+        font-family: monospace;
+        font-size: 0.8rem;
+    }
+
+    .about-link-title {
+        font-size: 1.35rem;
+        font-weight: 500;
+    }
+
+    .about-link-arrow {
+        font-size: 1.3rem;
+        transition: transform 0.2s ease;
+    }
+
+    .about-link:hover .about-link-arrow {
+        transform: translateX(5px);
+    }
+</style>

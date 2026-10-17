@@ -1,0 +1,105 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+/*
+ * Portfolio design tokens.
+ * Change the palette here rather than searching individual components.
+ * The default mode is parchment/antique gold; .dark is the cinematic charcoal,
+ * weathered steel, and warm-gold palette used by the knight experience.
+ */
+@theme {
+  --font-sans: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-display: 'Playfair Display', Georgia, serif;
+
+  --color-portfolio-bg: #f1ebdf;
+  --color-portfolio-text: #2b261f;
+  --color-portfolio-border: #d9cbb5;
+  --color-portfolio-accent: #80633c;
+  --color-portfolio-accent-soft: #c9b186;
+  --color-portfolio-muted: #746b5e;
+  --color-portfolio-card-bg: #fbf8f1;
+  --color-portfolio-glow: #bd914d;
+  --color-portfolio-button-bg: #5b4630;
+  --color-portfolio-button-text: #fff7e9;
+  --color-portfolio-surface: #e9dfce;
+  --color-portfolio-shadow: rgba(37, 27, 14, 0.12);
+
+}
+
+html.dark {
+  color-scheme: dark;
+  --color-portfolio-bg: #0b0c10;
+  --color-portfolio-text: #e8e0d2;
+  --color-portfolio-border: #342e24;
+  --color-portfolio-accent: #c7aa76;
+  --color-portfolio-accent-soft: #d9bd8a;
+  --color-portfolio-muted: #a79b88;
+  --color-portfolio-card-bg: #141519;
+  --color-portfolio-glow: #d5a45e;
+  --color-portfolio-button-bg: #8b7355;
+  --color-portfolio-button-text: #101014;
+  --color-portfolio-surface: #101115;
+  --color-portfolio-shadow: rgba(0, 0, 0, 0.32);
+}
+
+/* Scene tokens are shared by KnightCinematic.astro's CSS and Three.js scene. */
+:root {
+  --font-display: 'Playfair Display', Georgia, serif;
+  --knight-scene-background: #090a0e;
+  --knight-scene-text: #e8e0d2;
+  --knight-scene-text-muted: #d4c6ae;
+  --knight-scene-heading: #f0e8db;
+  --knight-scene-description: #c5bcad;
+  --knight-scene-warm-muted: #c2b69f;
+  --knight-scene-counter: #a99a81;
+  --knight-scene-eyebrow: #b29a72;
+  --knight-scene-gold: #c7aa76;
+  --knight-scene-gold-soft: #c7b18c;
+  --knight-scene-gold-bright: #e8c78e;
+  --knight-scene-highlight: #fff0d1;
+  --knight-scene-bronze: #8b7355;
+  --knight-scene-loading-muted: #948a7b;
+  --knight-scene-spinner-border: #453a2b;
+  --knight-light-sky: #b4c8e0;
+  --knight-light-ground: #17110c;
+  --knight-light-key: #ffd7a0;
+  --knight-light-rim: #497dbd;
+  --knight-light-fill: #a95e35;
+  --knight-glow: #ffd18a;
+  --knight-scene-shadow: rgba(0, 0, 0, 0.72);
+  --knight-vignette-start: rgba(9, 10, 14, 0.76);
+  --knight-vignette-edge: rgba(0, 0, 0, 0.42);
+  --knight-panel-translucent: rgba(9, 10, 14, 0.70);
+  --knight-panel-translucent-strong: rgba(9, 10, 14, 0.88);
+  --knight-panel-hover: rgba(139, 115, 85, 0.15);
+  --knight-gold-rgb: 194, 166, 118;
+  --knight-highlight-rgb: 218, 177, 106;
+  --knight-border-soft: rgba(194, 166, 118, 0.28);
+  --knight-border-medium: rgba(194, 166, 118, 0.45);
+  --knight-border-highlight: rgba(218, 177, 106, 0.62);
+  --knight-shadow-glow: rgba(218, 177, 106, 0.08);
+  --knight-hint-color: rgba(194, 166, 118, 0.72);
+  --knight-counter-line: rgba(194, 166, 118, 0.60);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    background-color: var(--color-portfolio-bg);
+    color: var(--color-portfolio-text);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: var(--color-portfolio-bg);
+    color: var(--color-portfolio-text);
+  }
+
+  ::selection {
+    background: var(--color-portfolio-accent-soft);
+    color: var(--color-portfolio-button-text);
+  }
+}

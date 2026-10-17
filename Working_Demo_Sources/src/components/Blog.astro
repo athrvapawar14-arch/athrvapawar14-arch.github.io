@@ -1,0 +1,147 @@
+---
+import { getCollection } from "astro:content";
+
+const notes = await getCollection("notes");
+
+notes.sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+
+const recentNotes = notes.slice(0, 3);
+---
+
+<section id="blog" class="notes-preview">
+  <div class="section-heading">
+    <span class="section-label">// NOTES</span>
+
+    <h2>
+      Things I'm<br />
+      <span>figuring out.</span>
+    </h2>
+  </div>
+
+  <div class="notes-list">
+    {recentNotes.map((note) => (
+      <a href={`/notes/${note.id}`} class="note-item">
+        <div>
+          <span class="note-date">
+            {note.data.pubDate.toLocaleDateString("en-GB", {
+              day: "2-digit",
+              month: "short",
+              year: "numeric",
+            })}
+          </span>
+
+          <h3>{note.data.title}</h3>
+
+          <p>{note.data.description}</p>
+        </div>
+
+        <span class="note-arrow">→</span>
+      </a>
+    ))}
+  </div>
+
+  <a href="/notes" class="all-notes">
+    View all notes →
+  </a>
+</section>
+
+<style>
+  .notes-preview {
+    padding: 100px 0;
+    border-top: 1px solid var(--color-portfolio-border);
+  }
+
+  .section-label {
+    color: var(--color-portfolio-accent);
+    font-family: monospace;
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+  }
+
+  .section-heading h2 {
+    margin: 18px 0 50px;
+    color: var(--color-portfolio-text);
+    font-size: clamp(2.8rem, 6vw, 5rem);
+    line-height: 1;
+    letter-spacing: -0.05em;
+  }
+
+  .section-heading h2 span {
+    color: var(--color-portfolio-accent);
+  }
+
+  .notes-list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .note-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+    padding: 28px 4px;
+    border-top: 1px solid var(--color-portfolio-border);
+    color: var(--color-portfolio-text);
+    text-decoration: none;
+    transition: padding 0.2s ease;
+  }
+
+  .note-item:last-child {
+    border-bottom: 1px solid var(--color-portfolio-border);
+  }
+
+  .note-item:hover {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .note-date {
+    color: var(--color-portfolio-muted);
+    font-family: monospace;
+    font-size: 0.75rem;
+  }
+
+  .note-item h3 {
+    margin: 8px 0;
+    font-size: 1.4rem;
+    font-weight: 500;
+  }
+
+  .note-item p {
+    margin: 0;
+    color: var(--color-portfolio-muted);
+  }
+
+  .note-arrow {
+    font-size: 1.3rem;
+    transition: transform 0.2s ease;
+  }
+
+  .note-item:hover .note-arrow {
+    transform: translateX(6px);
+  }
+
+  .all-notes {
+    display: inline-block;
+    margin-top: 28px;
+    color: var(--color-portfolio-text);
+    text-decoration: none;
+  }
+
+  .all-notes:hover {
+    color: var(--color-portfolio-accent);
+  }
+
+  @media (max-width: 800px) {
+    .notes-preview {
+      padding: 70px 0;
+    }
+
+    .note-item {
+      align-items: flex-start;
+    }
+  }
+</style>

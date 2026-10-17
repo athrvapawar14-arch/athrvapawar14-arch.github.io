@@ -1,0 +1,168 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/Navbar.astro";
+import ComingSoon from "../components/ComingSoon.astro";
+---
+
+<Layout
+  title="Skills & Explorations — Athrva Pawar"
+  description="Areas of computing Athrva is exploring through projects and experiments."
+>
+  <Navbar />
+  <main class="skills-page mx-auto w-full max-w-5xl px-6">
+    <section id="exploring" class="py-20">
+      <div class="flex items-end justify-between gap-6 mb-10">
+        <div>
+          <span class="font-mono text-xs tracking-widest text-[var(--color-portfolio-accent)]">
+            // CURRENTLY EXPLORING
+          </span>
+
+          <h2
+            class="mt-3 text-3xl md:text-4xl font-semibold tracking-tight text-[var(--color-portfolio-text)]"
+          >
+            Curiosity has no roadmap.
+          </h2>
+
+          <p class="mt-4 max-w-2xl text-[var(--color-portfolio-text)] leading-relaxed">
+            Things I'm learning, experimenting with, or slowly falling down the
+            rabbit hole of.
+          </p>
+        </div>
+
+        <span class="hidden md:block font-mono text-xs text-[var(--color-portfolio-muted)]">
+          [ 03 active ]
+        </span>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-5">
+        <!-- Quantum Computing -->
+        <article
+          class="group rounded-2xl border border-[var(--color-portfolio-border)] bg-[var(--color-portfolio-card-bg)] p-6
+                transition-all duration-300
+                hover:-translate-y-1 hover:border-[var(--color-portfolio-accent-soft)]
+                hover:shadow-lg"
+        >
+          <div class="flex items-start justify-between">
+            <span class="font-mono text-xs text-[var(--color-portfolio-accent)]"> 01 </span>
+
+            <span
+              class="text-[var(--color-portfolio-text)] transition-transform duration-300 group-hover:translate-x-1"
+            >
+              →
+            </span>
+          </div>
+
+          <h3 class="mt-8 text-xl font-semibold text-[var(--color-portfolio-text)]">
+            Quantum Computing
+          </h3>
+
+          <p class="mt-3 text-sm leading-relaxed text-[var(--color-portfolio-muted)]">
+            Exploring qubits, quantum circuits, algorithms, and the strange
+            world beyond classical computation.
+          </p>
+
+          <div class="mt-6 flex flex-wrap gap-2">
+            <span
+              class="rounded-md border border-[var(--color-portfolio-border)] px-2 py-1 font-mono text-[10px] text-[var(--color-portfolio-muted)]"
+            >
+              Qubits
+            </span>
+
+            <span
+              class="rounded-md border border-[var(--color-portfolio-border)] px-2 py-1 font-mono text-[10px] text-[var(--color-portfolio-muted)]"
+            >
+              Quantum
+            </span>
+          </div>
+        </article>
+
+        <!-- Photonic Computing -->
+        <article
+          class="group rounded-2xl border border-[var(--color-portfolio-border)] bg-[var(--color-portfolio-card-bg)] p-6
+                transition-all duration-300
+                hover:-translate-y-1 hover:border-[var(--color-portfolio-accent-soft)]
+                hover:shadow-lg"
+        >
+          <div class="flex items-start justify-between">
+            <span class="font-mono text-xs text-[var(--color-portfolio-accent)]"> 02 </span>
+
+            <span
+              class="text-[var(--color-portfolio-text)] transition-transform duration-300 group-hover:translate-x-1"
+            >
+              →
+            </span>
+          </div>
+
+          <h3 class="mt-8 text-xl font-semibold text-[var(--color-portfolio-text)]">
+            Photonic Computing
+          </h3>
+
+          <p class="mt-3 text-sm leading-relaxed text-[var(--color-portfolio-muted)]">
+            Looking into computing with light, optical hardware, and what
+            photonics could mean for future processors.
+          </p>
+
+          <div class="mt-6 flex flex-wrap gap-2">
+            <span
+              class="rounded-md border border-[var(--color-portfolio-border)] px-2 py-1 font-mono text-[10px] text-[var(--color-portfolio-muted)]"
+            >
+              Photonics
+            </span>
+
+            <span
+              class="rounded-md border border-[var(--color-portfolio-border)] px-2 py-1 font-mono text-[10px] text-[var(--color-portfolio-muted)]"
+            >
+              Hardware
+            </span>
+          </div>
+        </article>
+
+        <!-- Computer Systems -->
+        <article
+          class="group rounded-2xl border border-[var(--color-portfolio-border)] bg-[var(--color-portfolio-card-bg)] p-6
+                 transition-all duration-300
+                 hover:-translate-y-1 hover:border-[var(--color-portfolio-accent-soft)]
+                 hover:shadow-lg"
+        >
+          <div class="flex items-start justify-between">
+            <span class="font-mono text-xs text-[var(--color-portfolio-accent)]"> 03 </span>
+
+            <span
+              class="text-[var(--color-portfolio-text)] transition-transform duration-300 group-hover:translate-x-1"
+            >
+              →
+            </span>
+          </div>
+
+          <h3 class="mt-8 text-xl font-semibold text-[var(--color-portfolio-text)]">
+            Computer Systems
+          </h3>
+
+          <p class="mt-3 text-sm leading-relaxed text-[var(--color-portfolio-muted)]">
+            Understanding what happens underneath the abstractions — CPUs,
+            operating systems, memory, and low-level software.
+          </p>
+
+          <div class="mt-6 flex flex-wrap gap-2">
+            <span
+              class="rounded-md border border-[var(--color-portfolio-border)] px-2 py-1 font-mono text-[10px] text-[var(--color-portfolio-muted)]"
+            >
+              Systems
+            </span>
+
+            <span
+              class="rounded-md border border-[var(--color-portfolio-border)] px-2 py-1 font-mono text-[10px] text-[var(--color-portfolio-muted)]"
+            >
+              Low-level
+            </span>
+          </div>
+        </article>
+      </div>
+    </section>
+    <ComingSoon />
+  </main>
+</Layout>
+
+<style>
+  .skills-page { min-height: calc(100vh - 4rem); }
+</style>

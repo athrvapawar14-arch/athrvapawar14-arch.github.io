@@ -1,0 +1,219 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Navbar from "../../components/Navbar.astro";
+import { getCollection, render } from "astro:content";
+
+export async function getStaticPaths() {
+  const notes = await getCollection("notes");
+
+  return notes.map((note) => ({
+    params: { slug: note.id },
+    props: { note },
+  }));
+}
+
+const { note } = Astro.props;
+const { Content } = await render(note);
+---
+
+<Layout
+  title={`${note.data.title} — Athrva Pawar`}
+  description={note.data.description}
+>
+  <Navbar />
+
+  <main class="note-page">
+    <article class="note">
+      <header class="note-header">
+        <span class="section-label">// NOTE</span>
+
+        <h1>{note.data.title}</h1>
+
+        <p class="note-description">
+          {note.data.description}
+        </p>
+
+        <div class="note-meta">
+          <span>
+            {note.data.pubDate.toLocaleDateString("en-GB", {
+              day: "2-digit",
+              month: "short",
+              year: "numeric",
+            })}
+          </span>
+
+          <span>·</span>
+
+          <span>
+            {note.data.tags.join(" · ")}
+          </span>
+        </div>
+      </header>
+
+      <div class="note-content">
+        <Content /> 
+      </div>
+
+      <footer class="note-footer">
+        <a href="/notes">← Back to Notes</a>
+      </footer>
+    </article>
+  </main>
+</Layout>
+
+<style>
+  .note-page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 120px 24px 100px;
+  }
+
+  .note {
+    width: 100%;
+  }
+
+  .note-header {
+    padding-bottom: 50px;
+    border-bottom: 1px solid var(--color-portfolio-border);
+  }
+
+  .section-label {
+    color: var(--color-portfolio-accent);
+    font-family: monospace;
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+  }
+
+  h1 {
+    margin: 24px 0 20px;
+    color: var(--color-portfolio-text);
+    font-size: clamp(3rem, 7vw, 5.5rem);
+    line-height: 0.98;
+    letter-spacing: -0.055em;
+  }
+
+  .note-description {
+    max-width: 650px;
+    margin: 0;
+    color: var(--color-portfolio-muted);
+    font-size: 1.2rem;
+    line-height: 1.7;
+  }
+
+  .note-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 24px;
+    color: var(--color-portfolio-muted);
+    font-family: monospace;
+    font-size: 0.8rem;
+  }
+
+  .note-content {
+  padding: 50px 0;
+  color: var(--color-portfolio-text);
+  font-size: 1.08rem;
+  line-height: 1.8;
+}
+
+.note-content :global(h2) {
+  margin: 60px 0 20px;
+  font-size: 2rem;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+}
+
+.note-content :global(h3) {
+  margin: 40px 0 16px;
+  font-size: 1.4rem;
+}
+
+.note-content :global(p) {
+  margin: 0 0 22px;
+}
+
+.note-content :global(a) {
+  color: var(--color-portfolio-accent);
+}
+
+.note-content :global(ul),
+.note-content :global(ol) {
+  margin: 0 0 24px;
+  padding-left: 28px;
+}
+
+.note-content :global(li) {
+  margin-bottom: 8px;
+}
+
+.note-content :global(blockquote) {
+  margin: 32px 0;
+  padding: 16px 22px;
+  border-left: 3px solid var(--color-portfolio-accent);
+  color: var(--color-portfolio-muted);
+}
+
+.note-content :global(code) {
+  padding: 3px 6px;
+  border-radius: 4px;
+  background: var(--color-portfolio-card-bg);
+  border: 1px solid var(--color-portfolio-border);
+  font-family: monospace;
+  font-size: 0.9em;
+}
+
+.note-content :global(pre) {
+  margin: 32px 0;
+  padding: 22px;
+  overflow-x: auto;
+  border: 1px solid var(--color-portfolio-border);
+  border-radius: 8px;
+  background: var(--color-portfolio-card-bg);
+}
+
+.note-content :global(pre code) {
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.note-content :global(img) {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 36px auto;
+  border: 1px solid var(--color-portfolio-border);
+  border-radius: 8px;
+}
+
+.note-content :global(hr) {
+  margin: 50px 0;
+  border: 0;
+  border-top: 1px solid var(--color-portfolio-border);
+}
+
+  .note-footer {
+    padding-top: 30px;
+    border-top: 1px solid var(--color-portfolio-border);
+  }
+
+  .note-footer a {
+    color: var(--color-portfolio-text);
+    text-decoration: none;
+  }
+
+  .note-footer a:hover {
+    color: var(--color-portfolio-accent);
+  }
+
+  @media (max-width: 800px) {
+    .note-page {
+      padding: 90px 22px 70px;
+    }
+
+    h1 {
+      font-size: clamp(2.8rem, 12vw, 4rem);
+    }
+  }
+</style>

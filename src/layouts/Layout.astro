@@ -8,7 +8,7 @@ interface Props {
 
 const { 
   title = "Athrva Pawar | Developer Portfolio", 
-  description = "A lightweight, clean light-mode portfolio using Astro, Tailwind CSS, featuring smooth animations and monospace accents." 
+  description = "A cinematic portfolio exploring software, systems, and experiments through a medieval knight." 
 } = Astro.props;
 ---
 
@@ -20,13 +20,14 @@ const {
     <script is:inline>
       const savedTheme = localStorage.getItem("theme");
 
-      if (savedTheme === "dark") {
+      // The portfolio now defaults to its cinematic medieval palette.
+      // Visitors can still switch to the parchment/light theme and that choice is saved.
+      if (savedTheme !== "light") {
         document.documentElement.classList.add("dark");
       }
     </script>
     
-    <link rel="icon" type="image/svg+xml" href="/myFavicon.svg" />
-    <link rel="icon" href="/myFavicon.ico" />
+    <link rel="icon" type="image/png" href="/myFavicon.png" />
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
     

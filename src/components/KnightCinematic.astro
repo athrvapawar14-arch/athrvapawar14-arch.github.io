@@ -3,7 +3,6 @@
   <div class="cinematic__vignette" aria-hidden="true"></div>
   <div class="cinematic__grain" aria-hidden="true"></div>
 
-  <a class="cinematic__back" href="/" aria-label="Back to portfolio">← ATHRVA PAWAR</a>
   <button class="cinematic__skip" data-skip-intro type="button">
     SKIP INTRO <span aria-hidden="true">↘</span>
   </button>
@@ -76,17 +75,28 @@
     const hoverTitle = root.querySelector("[data-hover-title]") as HTMLElement;
     const contactEmblem = root.querySelector("[data-contact-emblem]") as HTMLElement;
     const skipButton = root.querySelector("[data-skip-intro]") as HTMLButtonElement;
-    const prefersReducedMotion = window.matchMedia(
-    "(prefers-reduced-motion: reduce)"
-    );
-
-    // Temporarily force cinematic motion on the isolated test page.
-    // Other pages will continue respecting the visitor's preference.
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    // This cinematic intro is a defining part of the portfolio landing page.
+    // Visitors can always skip it; keep it enabled on the homepage while
+    // retaining reduced-motion behaviour if the component is reused elsewhere.
     const reducedMotion = {
-    get matches(): boolean {
-        const isKnightLab = window.location.pathname.includes("/knight-lab");
-        return prefersReducedMotion.matches && !isKnightLab;
-    },
+      get matches(): boolean {
+        return prefersReducedMotion.matches && window.location.pathname !== "/";
+      },
+    };
+
+    // Shared palette lives in src/styles/global.css. CSS and Three.js read the
+    // same tokens so the armour scene can be recoloured from one place.
+    const cssColor = (name: string, fallback: string) =>
+      getComputedStyle(document.documentElement).getPropertyValue(name).trim() || fallback;
+    const palette = {
+      sceneBackground: cssColor("--knight-scene-background", "#090a0e"),
+      skyLight: cssColor("--knight-light-sky", "#b4c8e0"),
+      groundLight: cssColor("--knight-light-ground", "#17110c"),
+      keyLight: cssColor("--knight-light-key", "#ffd7a0"),
+      rimLight: cssColor("--knight-light-rim", "#497dbd"),
+      fillLight: cssColor("--knight-light-fill", "#a95e35"),
+      glow: cssColor("--knight-glow", "#ffd18a"),
     };
 
     // Section order is also the cinematic opening order and scroll order.
@@ -106,7 +116,7 @@
         eyebrow: "02 / THE CRAFT",
         title: "PROJECTS",
         description: "Things built to understand what lies beneath.",
-        href: "/#projects",
+        href: "/projects",
         y: 0.62,
         x: -0.10,
         cameraDistance: 4.05,
@@ -116,7 +126,7 @@
         eyebrow: "03 / THE EDGE",
         title: "SKILLS",
         description: "Tools, systems, and the work of learning how they fit together.",
-        href: "/#exploring",
+        href: "/skills",
         y: 0.51,
         x: 0.02,
         cameraDistance: 3.95,
@@ -126,7 +136,7 @@
         eyebrow: "04 / THE JOURNAL",
         title: "LOGS",
         description: "Build notes, experiments, and things worth recording.",
-        href: "/#blog",
+        href: "/notes",
         y: 0.20,
         x: -0.12,
         cameraDistance: 4.05,
@@ -146,7 +156,7 @@
         eyebrow: "06 / THE OPEN GATE",
         title: "CONTACT",
         description: "Every worthwhile undertaking begins with a conversation.",
-        href: "/#contact",
+        href: "/contact",
         y: 0.72,
         x: 0.25,
         cameraDistance: 3.95,
@@ -154,8 +164,8 @@
     ];
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color("#090a0e");
-    scene.fog = new THREE.FogExp2("#090a0e", 0.035);
+    scene.background = new THREE.Color(palette.sceneBackground);
+    scene.fog = new THREE.FogExp2(palette.sceneBackground, 0.035);
 
     const camera = new THREE.PerspectiveCamera(36, 1, 0.05, 100);
     camera.position.set(0, 0.15, 6.8);
@@ -167,17 +177,17 @@
     const modelCenter = new THREE.Vector3();
     const modelSize = new THREE.Vector3();
 
-    scene.add(new THREE.HemisphereLight(0xb4c8e0, 0x17110c, 1.35));
+    scene.add(new THREE.HemisphereLight(palette.skyLight, palette.groundLight, 1.35));
 
-    const keyLight = new THREE.DirectionalLight(0xffd7a0, 3.0);
+    const keyLight = new THREE.DirectionalLight(palette.keyLight, 3.0);
     keyLight.position.set(2.5, 4, 3);
     scene.add(keyLight);
 
-    const rimLight = new THREE.DirectionalLight(0x497dbd, 2.5);
+    const rimLight = new THREE.DirectionalLight(palette.rimLight, 2.5);
     rimLight.position.set(-3, 2.5, -3);
     scene.add(rimLight);
 
-    const fillLight = new THREE.PointLight(0xa95e35, 0.65, 8);
+    const fillLight = new THREE.PointLight(palette.fillLight, 0.65, 8);
     fillLight.position.set(-1, 0, 2);
     scene.add(fillLight);
 
@@ -191,10 +201,10 @@
       const context = glowCanvas.getContext("2d");
       if (!context) throw new Error("Could not create armour highlight texture");
       const gradient = context.createRadialGradient(64, 64, 2, 64, 64, 62);
-      gradient.addColorStop(0, "rgba(255, 238, 190, 0.42)");
-      gradient.addColorStop(0.16, "rgba(255, 205, 116, 0.30)");
-      gradient.addColorStop(0.42, "rgba(235, 160, 96, 0.13)");
-      gradient.addColorStop(1, "rgba(220, 145, 55, 0)");
+      gradient.addColorStop(0, "rgba(255, 255, 255, 0.42)");
+      gradient.addColorStop(0.16, "rgba(255, 255, 255, 0.30)");
+      gradient.addColorStop(0.42, "rgba(255, 255, 255, 0.13)");
+      gradient.addColorStop(1, "rgba(255, 255, 255, 0)");
       context.fillStyle = gradient;
       context.fillRect(0, 0, 128, 128);
       const texture = new THREE.CanvasTexture(glowCanvas);
@@ -208,7 +218,7 @@
     const glowTexture = makeGlowTexture();
     const glowMaterial = new THREE.SpriteMaterial({
       map: glowTexture,
-      color: new THREE.Color("#ffd18a"),
+      color: new THREE.Color(palette.glow),
       transparent: true,
       opacity: 0.68,
       blending: THREE.AdditiveBlending,
@@ -249,9 +259,9 @@
     const destinationTarget = currentTarget.clone();
     const sectionAnchors: THREE.Vector3[] = [];
 
-    const INTRO_MOVE_SECONDS = 5.9;
-    const FOCUS_MOVE_SECONDS = 7.8;
-    const RETURN_MOVE_SECONDS = 6.4;
+    const INTRO_MOVE_SECONDS = 4.5;
+    const FOCUS_MOVE_SECONDS = 6.7;
+    const RETURN_MOVE_SECONDS = 4.1;
 
     function showError(err: unknown) {
       console.error("[KnightCinematic]", err);
@@ -296,9 +306,9 @@
     function setLandingCaption() {
       fadeCaption(() => {
         counter.textContent = "∞";
-        eyebrow.textContent = "ATHRVA PAWAR / PORTFOLIO";
+        eyebrow.textContent = "COMPUTER SCIENCE × CURIOSITY";
         heading.textContent = "THE BEARER";
-        description.textContent = "Choose an armour piece. Discover what lies beneath.";
+        description.textContent = "Computer Science student. Builder. Experimenter. Professional question-asker. I build things to understand what lies underneath.";
         sectionLink.hidden = true;
         contactEmblem.hidden = true;
         root!.dataset.focused = "none";
@@ -551,17 +561,23 @@
 
     function handleWheel(event: WheelEvent) {
       if (!knight || Math.abs(event.deltaY) < 10) return;
+
+      // The homepage is a single-screen cinematic interface. Always consume
+      // wheel input here so the browser never scrolls into page content.
       event.preventDefault();
-      const now = performance.now();
-      if (now - lastScrollAt < 1050) return;
-      lastScrollAt = now;
+      const direction = Math.sign(event.deltaY);
 
       if (introRunning) {
         skipIntro();
         return;
       }
 
-      const direction = Math.sign(event.deltaY);
+      const now = performance.now();
+      if (now - lastScrollAt < 950) return;
+      lastScrollAt = now;
+
+      // From the overview, scroll down to the first armour section.
+      // Scrolling up in the overview does nothing rather than moving the page.
       if (focusedSection === null) {
         if (direction > 0) focusSection(0, targetForSection(0));
         return;
@@ -570,9 +586,10 @@
       const next = focusedSection + direction;
       if (next < 0) {
         returnToFullView();
-      } else if (next < sections.length && next !== focusedSection) {
+      } else if (next >= 0 && next < sections.length && next !== focusedSection) {
         focusSection(next, targetForSection(next));
       }
+      // At the first/last boundary, remain in place; do not scroll the document.
     }
 
     function handleKeydown(event: KeyboardEvent) {
@@ -733,13 +750,13 @@
 <style>
   .cinematic {
     position: relative;
-    height: calc(100svh - 5rem);
+    height: calc(100svh - 4rem);
     min-height: 34rem;
     overflow: hidden;
     isolation: isolate;
-    background: #090a0e;
-    color: #e8e0d2;
-    font-family: 'JetBrains Mono', monospace;
+    background: var(--knight-scene-background);
+    color: var(--knight-scene-text);
+    font-family: var(--font-mono);
   }
 
   .cinematic__canvas,
@@ -758,8 +775,8 @@
     z-index: 1;
     pointer-events: none;
     background:
-      linear-gradient(90deg, rgba(9, 10, 14, .76), transparent 76%),
-      radial-gradient(ellipse at center, transparent 22%, rgba(0, 0, 0, .42) 100%);
+      linear-gradient(90deg, var(--knight-vignette-start), transparent 76%),
+      radial-gradient(ellipse at center, transparent 22%, var(--knight-vignette-edge) 100%);
   }
 
   .cinematic__grain {
@@ -769,7 +786,6 @@
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.3'/%3E%3C/svg%3E");
   }
 
-  .cinematic__back,
   .cinematic__skip,
   .cinematic__counter,
   .cinematic__caption,
@@ -781,23 +797,16 @@
     z-index: 2;
   }
 
-  .cinematic__back {
-    top: 1.5rem;
-    left: clamp(1rem, 4vw, 3rem);
-    color: #c2b69f;
-    text-decoration: none;
-    font-size: .68rem;
-    letter-spacing: .12em;
-  }
+
 
   .cinematic__skip {
     top: 1.22rem;
     left: 50%;
     transform: translateX(-50%);
-    border: 1px solid rgba(194, 166, 118, .28);
+    border: 1px solid var(--knight-border-soft);
     padding: .55rem .8rem;
-    background: rgba(9, 10, 14, .7);
-    color: #c7b18c;
+    background: var(--knight-panel-translucent);
+    color: var(--knight-scene-gold-soft);
     font: inherit;
     font-size: .58rem;
     letter-spacing: .14em;
@@ -807,9 +816,9 @@
   }
 
   .cinematic__skip:hover {
-    color: #fff0d1;
-    border-color: rgba(232, 169, 78, .7);
-    background: rgba(139, 115, 85, .15);
+    color: var(--knight-scene-highlight);
+    border-color: var(--knight-border-highlight);
+    background: var(--knight-panel-hover);
   }
 
   .cinematic__skip[hidden] { display: none; }
@@ -820,7 +829,7 @@
     display: flex;
     align-items: center;
     gap: .75rem;
-    color: #a99a81;
+    color: var(--knight-scene-counter);
     font-size: .62rem;
     letter-spacing: .13em;
     pointer-events: none;
@@ -830,14 +839,14 @@
     display: block;
     width: 2rem;
     height: 1px;
-    background: #8b7355;
+    background: var(--knight-scene-bronze);
   }
 
   .cinematic__caption {
     left: clamp(1.25rem, 7.2vw, 7rem);
     bottom: clamp(7rem, 17vh, 10rem);
     max-width: min(32rem, 72vw);
-    text-shadow: 0 2px 24px #000;
+    text-shadow: 0 2px 24px var(--knight-scene-shadow);
     pointer-events: none;
     opacity: 1;
     transform: translateY(0);
@@ -851,15 +860,15 @@
 
   .cinematic__eyebrow {
     margin: 0 0 1rem;
-    color: #b29a72;
+    color: var(--knight-scene-eyebrow);
     font-size: .68rem;
     letter-spacing: .2em;
   }
 
   .cinematic__caption h1 {
     margin: 0;
-    color: #f0e8db;
-    font-family: Georgia, 'Times New Roman', serif;
+    color: var(--knight-scene-heading);
+    font-family: var(--font-display);
     font-size: clamp(2.8rem, 6.1vw, 5.3rem);
     font-weight: 400;
     letter-spacing: -.055em;
@@ -869,8 +878,8 @@
   .cinematic__caption > p:not(.cinematic__eyebrow) {
     max-width: 25rem;
     margin: 1.15rem 0 1.35rem;
-    color: #c5bcad;
-    font-family: Inter, sans-serif;
+    color: var(--knight-scene-description);
+    font-family: var(--font-sans);
     font-size: clamp(.9rem, 1.5vw, 1.08rem);
     line-height: 1.7;
   }
@@ -879,7 +888,7 @@
     display: inline-flex;
     align-items: center;
     gap: .8rem;
-    color: #c7aa76;
+    color: var(--knight-scene-gold);
     text-decoration: none;
     font-size: .67rem;
     letter-spacing: .12em;
@@ -887,7 +896,7 @@
   }
 
   .cinematic__section-link[hidden] { display: none; }
-  .cinematic__section-link:hover { color: #fff0d1; }
+  .cinematic__section-link:hover { color: var(--knight-scene-highlight); }
 
   .cinematic__contact-emblem {
     display: flex;
@@ -895,7 +904,7 @@
     gap: .65rem;
     width: fit-content;
     margin: 0 0 .8rem;
-    color: #c7aa76;
+    color: var(--knight-scene-gold);
     font-size: .55rem;
     letter-spacing: .16em;
   }
@@ -909,10 +918,10 @@
     gap: .28rem;
     min-width: 9.5rem;
     padding: .65rem .8rem;
-    border: 1px solid rgba(218, 177, 106, .5);
-    background: rgba(9, 10, 14, .88);
-    color: #e8c78e;
-    box-shadow: 0 0 22px rgba(218, 177, 106, .08);
+    border: 1px solid var(--knight-border-highlight);
+    background: var(--knight-panel-translucent-strong);
+    color: var(--knight-scene-gold-bright);
+    box-shadow: 0 0 22px var(--knight-shadow-glow);
     font-size: .62rem;
     letter-spacing: .13em;
     pointer-events: none;
@@ -920,7 +929,7 @@
   }
 
   .cinematic__hover-label span + span {
-    color: #a99a81;
+    color: var(--knight-scene-counter);
     font-size: .5rem;
   }
 
@@ -930,7 +939,7 @@
     right: clamp(1rem, 4vw, 3rem);
     bottom: 2.6rem;
     max-width: 34rem;
-    color: rgba(194, 166, 118, .72);
+    color: var(--knight-hint-color);
     font-size: .58rem;
     letter-spacing: .12em;
     text-align: right;
@@ -945,7 +954,7 @@
     justify-content: center;
     flex-direction: column;
     gap: .8rem;
-    background: #090a0e;
+    background: var(--knight-scene-background);
     text-align: center;
   }
 
@@ -955,24 +964,24 @@
 
   .cinematic__loading p,
   .cinematic__error p {
-    color: #c4a778;
+    color: var(--knight-scene-gold);
     font-size: .7rem;
     letter-spacing: .18em;
   }
 
   .cinematic__loading span:last-child,
   .cinematic__error span {
-    color: #948a7b;
+    color: var(--knight-scene-loading-muted);
     font-size: .65rem;
   }
 
-  .cinematic__error a { margin-top: 1rem; color: #c4a778; }
+  .cinematic__error a { margin-top: 1rem; color: var(--knight-scene-gold); }
 
   .cinematic__spinner {
     width: 2rem;
     height: 2rem;
-    border: 1px solid #453a2b;
-    border-top-color: #c4a778;
+    border: 1px solid var(--knight-scene-spinner-border);
+    border-top-color: var(--knight-scene-gold);
     border-radius: 50%;
     animation: knight-spin 1s linear infinite;
   }
@@ -980,7 +989,7 @@
   @keyframes knight-spin { to { transform: rotate(360deg); } }
 
   @media (max-width: 640px) {
-    .cinematic { min-height: 38rem; height: calc(100svh - 4.5rem); }
+    .cinematic { min-height: 38rem; height: calc(100svh - 4rem); }
     .cinematic__caption { bottom: 8rem; max-width: 88vw; }
     .cinematic__caption h1 { font-size: clamp(2.7rem, 13vw, 4.5rem); }
     .cinematic__skip { top: auto; bottom: 4.5rem; left: auto; right: 1rem; transform: none; }

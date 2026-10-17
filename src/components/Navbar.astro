@@ -10,14 +10,14 @@
       href="/"
       class="group flex items-center gap-2 font-mono text-sm font-semibold tracking-tight text-[var(--color-portfolio-text)]"
     >
-      <span class="text-blue-500 font-bold">&lt;</span>
+      <span class="text-[var(--color-portfolio-accent)] font-bold">&lt;</span>
       <span class="relative">
         athrvapawar
         <span
           class="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-[var(--color-portfolio-text)] transition-all duration-300 group-hover:w-full"
         ></span>
       </span>
-      <span class="text-blue-500 font-bold">/&gt;</span>
+      <span class="text-[var(--color-portfolio-accent)] font-bold">/&gt;</span>
     </a>
 
     <!-- Nav Links (Desktop) -->
@@ -75,7 +75,7 @@
         </div>
       </div>
       <a
-        href="/#projects"
+        href="/projects"
         class="text-sm font-medium text-[var(--color-portfolio-text)]/70 hover:text-[var(--color-portfolio-text)] transition-colors duration-200"
         >Projects</a
       >
@@ -85,7 +85,7 @@
         >Notes</a
       >
       <a
-        href="/#contact"
+        href="/contact"
         class="inline-flex items-center justify-center px-3.5 py-1.5 border border-[var(--color-portfolio-border)] rounded bg-[var(--color-portfolio-card-bg)] text-xs font-mono text-[var(--color-portfolio-text)] hover:bg-[var(--color-portfolio-border)] hover:border-[var(--color-portfolio-muted)] hover:shadow-xs active:bg-[var(--color-portfolio-border)] transition-all duration-200"
       >
         Say Hello
@@ -180,17 +180,17 @@
       </div>
     </div>
     <a
-      href="/#projects"
+      href="/projects"
       class="mobile-nav-link text-sm font-medium text-[var(--color-portfolio-text)]/70 hover:text-[var(--color-portfolio-text)] py-1"
       >Projects</a
     >
     <a
-      href="/#blog"
+      href="/notes"
       class="mobile-nav-link text-sm font-medium text-[var(--color-portfolio-text)]/70 hover:text-[var(--color-portfolio-text)] py-1"
       >Notes</a
     >
     <a
-      href="/#contact"
+      href="/contact"
       class="mobile-nav-link inline-flex items-center justify-center w-full py-2 border border-[var(--color-portfolio-border)] rounded bg-[var(--color-portfolio-card-bg)] text-xs font-mono text-[var(--color-portfolio-text)] hover:bg-[var(--color-portfolio-border)] transition-colors"
     >
       Say Hello
@@ -208,7 +208,6 @@
   const mobileAboutToggle = document.getElementById("mobile-about-toggle");
   const mobileAboutMenu = document.getElementById("mobile-about-menu");
   const mobileAboutArrow = document.getElementById("mobile-about-arrow");
-  console.log(themeToggle);
 
   let isMenuOpen = false;
 

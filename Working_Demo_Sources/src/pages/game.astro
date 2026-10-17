@@ -1,0 +1,109 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/Navbar.astro";
+---
+
+<Layout
+  title="The Forge — Coming Soon | Athrva Pawar"
+  description="A browser game is being forged. Return when the gate opens."
+>
+  <Navbar />
+
+  <main class="flex-1 flex items-center justify-center min-h-[calc(100vh-4rem)]">
+    <div class="game-gate">
+      <!-- Shield emblem -->
+      <div class="gate-emblem" aria-hidden="true">
+        <svg viewBox="0 0 120 144" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M60 6 L114 27 L114 78 C114 108 60 138 60 138 C60 138 6 108 6 78 L6 27 Z"
+            stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" fill="currentColor" fill-opacity="0.06"
+          />
+          <path
+            d="M60 22 L96 38 L96 78 C96 100 60 122 60 122 C60 122 24 100 24 78 L24 38 Z"
+            stroke="currentColor" stroke-opacity="0.3" stroke-width="1" fill="none" stroke-dasharray="4 4"
+          />
+          <!-- Cross -->
+          <line x1="60" y1="42" x2="60" y2="108" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5"/>
+          <line x1="36" y1="70" x2="84" y2="70" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5"/>
+        </svg>
+      </div>
+
+      <p class="gate-label">// THE FORGE</p>
+
+      <h1 class="gate-heading">Coming Soon</h1>
+
+      <p class="gate-sub">
+        Something is being forged in the dark.<br />
+        Return when the gate opens.
+      </p>
+
+      <a href="/" class="gate-back">← Return to the keep</a>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .game-gate {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+    padding: 3rem 2rem;
+    text-align: center;
+    max-width: 420px;
+  }
+
+  .gate-emblem {
+    width: 96px;
+    color: var(--color-portfolio-accent);
+    opacity: 0.85;
+    animation: emblem-breathe 4s ease-in-out infinite;
+  }
+
+  @keyframes emblem-breathe {
+    0%, 100% { opacity: 0.65; transform: scale(1);     }
+    50%       { opacity: 0.95; transform: scale(1.04);  }
+  }
+
+  .gate-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    color: color-mix(in srgb, var(--color-portfolio-accent) 70%, transparent);
+    text-transform: uppercase;
+  }
+
+  .gate-heading {
+    font-size: clamp(2.2rem, 6vw, 3.5rem);
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    color: var(--color-portfolio-text);
+    margin: 0;
+  }
+
+  .gate-sub {
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: var(--color-portfolio-muted);
+    max-width: 300px;
+  }
+
+  .gate-back {
+    margin-top: 1rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    color: color-mix(in srgb, var(--color-portfolio-accent) 70%, transparent);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .gate-back:hover {
+    color: var(--color-portfolio-accent);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .gate-emblem { animation: none; }
+  }
+</style>

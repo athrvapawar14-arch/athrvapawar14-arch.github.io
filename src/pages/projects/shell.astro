@@ -9,7 +9,7 @@ import Navbar from "../../components/Navbar.astro";
 >
 <Navbar />
     <main class="project-page">
-        <a href="/#projects" class="back-link"> ← Back to Projects </a>
+        <a href="/projects" class="back-link"> ← Back to Projects </a>
 
         <header class="project-hero">
             <span class="project-label">// PROJECT</span>
@@ -100,17 +100,17 @@ import Navbar from "../../components/Navbar.astro";
     }
 
     .back-link:hover {
-        color: #1769ff;
+        color: var(--color-portfolio-accent);
     }
 
     .project-hero {
         margin-top: 4rem;
         padding-bottom: 3rem;
-        border-bottom: 1px solid #dbe3ef;
+        border-bottom: 1px solid var(--color-portfolio-border);
     }
 
     .project-label {
-        color: #1769ff;
+        color: var(--color-portfolio-accent);
         font-family: monospace;
         font-weight: 600;
     }
@@ -137,7 +137,7 @@ import Navbar from "../../components/Navbar.astro";
 
     .tags span {
         padding: 0.4rem 0.7rem;
-        border: 1px solid #dbe3ef;
+        border: 1px solid var(--color-portfolio-border);
         border-radius: 5px;
         color: var(--color-portfolio-muted);
         font-family: monospace;
@@ -168,13 +168,13 @@ import Navbar from "../../components/Navbar.astro";
         display: inline-block;
         padding: 0.85rem 1.2rem;
         border-radius: 6px;
-        background: #172033;
-        color: white;
+        background: var(--color-portfolio-button-bg);
+        color: var(--color-portfolio-button-text);
         text-decoration: none;
         font-family: monospace;
     }
 
     .primary-button:hover {
-        background: #1769ff;
+        background: var(--color-portfolio-accent);
     }
 </style>

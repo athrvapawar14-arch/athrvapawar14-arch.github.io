@@ -1,0 +1,19 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/Navbar.astro";
+import Contact from "../components/Contact.astro";
+---
+
+<Layout
+  title="Contact — Athrva Pawar"
+  description="Get in touch with Athrva Pawar about projects, technology, or collaboration."
+>
+  <Navbar />
+  <main class="contact-page mx-auto w-full max-w-5xl px-6">
+    <Contact />
+  </main>
+</Layout>
+
+<style>
+  .contact-page { min-height: calc(100vh - 4rem); }
+</style>
